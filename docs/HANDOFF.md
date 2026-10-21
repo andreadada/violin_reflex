@@ -1,6 +1,6 @@
 # Handoff — Violin Reflection Removal
 
-**Stato:** Fase 1 conclusa; Fase 2, Test 01 e Test 02 eseguiti. Risultato estetico ancora insufficiente.
+**Stato:** Fase 1 conclusa; Fase 2, Test 01 e Test 02 eseguiti. Test 02 mostra una prima attenuazione visibile della macchia principale; risultato da migliorare.
 
 ## Obiettivo
 
@@ -31,15 +31,15 @@ Soglia operativa **1,5 px**. Residuo mediano di R4 sui contorni: circa **7,47 �
 Dettagli: [02_riduzione_riflessi.md](02_riduzione_riflessi.md).
 
 - **Test 01, `2_reflection_step1.py`:** confronto delle cinque illuminazioni, nessuna correzione. Base è il riferimento più equilibrato.
-- **Test 02, `2_reflection_step2.py`:** fusione automatica tramite cromaticità e luminosità. **4.872.007 pixel (10,72%) modificati**, alpha medio 0,148; riflessi ancora evidenti. Non è una correzione finale validata.
+- **Test 02, `2_reflection_step2.py`:** fusione automatica tramite cromaticità e luminosità. **4.872.007 pixel (10,72%) modificati**, alpha medio 0,148. **Attenuazione parziale visibile della macchia principale** con resa generale abbastanza naturale; altri riflessi, soprattutto sui bordi, persistono. Prima candidata promettente, non ancora finale.
 
 Output: `output/02_analisi_riflessi/test_01/` e `test_02/`.
 
 ## Prossimo passo — Test 03
 
-**Creare localmente `2_reflection_step3.py`.** Prima di un'altra fusione, verificare se gli scatti registrati mostrino davvero texture del legno meglio leggibile nelle zone con riflesso. Testare l'intero violino, bordi compresi, con confronto a pixel nativi e zone di controllo. Generare una mappa diagnostica e pochi confronti leggibili.
+**Creare localmente `2_reflection_step3.py`.** Proseguire dal Test 02, senza scartare la fusione esistente: esaminare perché funziona sulla macchia principale ma meno altrove. Verificare nei TIFF registrati i dettagli disponibili nelle zone critiche (anche bordi), con pochi confronti a pixel nativi e zone di controllo.
 
-**Decisione:** fusione selettiva solo se esistono dettagli recuperabili; altrimenti ripensare la tecnica.
+**Decisione:** conservare la correzione già utile e migliorarne selettività e qualità solo dove i dati supportano un intervento, evitando scurimenti e aloni.
 
 ## Regole
 
