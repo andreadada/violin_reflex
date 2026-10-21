@@ -1,50 +1,50 @@
 # Handoff — Violin Reflection Removal
 
-**Stato:** Fase 1 completata. Si riparte dalla progettazione della Fase 2.
+**Stato:** Fase 1 conclusa; Fase 2, Test 01 e Test 02 eseguiti. Risultato estetico ancora insufficiente.
 
 ## Obiettivo
 
-Individuare e attenuare riflessi indesiderati sulla vernice del violino, conservando venature, colore e risoluzione della fotografia originale. Preferire procedure automatiche verificabili, con eventuale rifinitura manuale.
+Ottenere una fotografia bella da catalogo, riducendo i riflessi su **tutto il violino, bordi inclusi**, senza perdere colore o venature. Il docente non richiede una separazione fisica delle componenti luminose.
 
-## Materiale
+## Input locali
 
-- `images/Base.tif`: riferimento, quattro luci accese.
-- `images/Riflesso_1.tif`–`Riflesso_4.tif`: una luce accesa alla volta.
-- Dimensioni: **5504 × 8256 px**, RGB a 8 bit per canale.
+- `images/Base.tif` — tutte e quattro le luci accese.
+- `output/01_registrazione/test_01/risultato/registered/Riflesso_1_registered.tif` … `Riflesso_4_registered.tif`.
+- Maschere di validità in `output/01_registrazione/test_01/diagnostica/masks/`.
+- TIFF 5504 × 8256 px, RGB uint8.
 
-## Fase 1 — Registrazione completata
+## Fase 1 — Registrazione (validata)
 
-Gli script originali sono `allineamento.py`, `verifica_allineamento.py`, `registration.py`, `registration_step2.py`, `registration_step3.py`, `registration_step4.py` e `registration_pipeline.py`.
+Script originali: `allineamento.py`, `verifica_allineamento.py`, `registration.py`, `registration_step2.py`, `registration_step3.py`, `registration_step4.py`, `registration_pipeline.py`.
 
-| Scatto | Δx | Δy | Esito |
+| Scatto | Δx | Δy | Decisione |
 | --- | ---: | ---: | --- |
-| Riflesso 1 | −0,843 px | −0,049 px | Invariato |
-| Riflesso 2 | +0,350 px | +0,111 px | Invariato |
-| Riflesso 3 | −0,236 px | −0,643 px | Invariato |
-| Riflesso 4 | −7,358 px | +0,269 px | Registrato |
+| R1 | −0,843 px | −0,049 px | Invariato |
+| R2 | +0,350 px | +0,111 px | Invariato |
+| R3 | −0,236 px | −0,643 px | Invariato |
+| R4 | −7,358 px | +0,269 px | Registrato |
 
-Soglia prudenziale: **1,5 px**. Su Riflesso 4 il residuo mediano sui contorni del violino è passato da circa **7,47 px a 0,94 px**.
+Soglia operativa **1,5 px**. Residuo mediano di R4 sui contorni: circa **7,47 → 0,94 px**. Non rifare la registrazione.
 
-Output confermati:
-`output/01_registrazione/test_01/risultato/registered/` (TIFF);
-`diagnostica/masks/` (pixel validi);
-`report/` (misure).
+## Fase 2 — Test eseguiti
 
-## Fase 2 — Miglioramento estetico (da iniziare)
+Dettagli: [02_riduzione_riflessi.md](02_riduzione_riflessi.md).
 
-Indicazione del docente: non serve separare fisicamente le componenti luminose; serve una fotografia esteticamente migliore. La registrazione iniziale richiesta è già stata eseguita.
+- **Test 01, `2_reflection_step1.py`:** confronto delle cinque illuminazioni, nessuna correzione. Base è il riferimento più equilibrato.
+- **Test 02, `2_reflection_step2.py`:** fusione automatica tramite cromaticità e luminosità. **4.872.007 pixel (10,72%) modificati**, alpha medio 0,148; riflessi ancora evidenti. Non è una correzione finale validata.
 
-**Step 2.1 — `2_reflection_step1.py` (locale, ancora da creare):**
-1. Leggere Base e i quattro TIFF registrati.
-2. Produrre un confronto visivo delle cinque illuminazioni senza correzioni.
-3. Identificare le zone con riflessi fotograficamente fastidiosi.
-4. Usare le osservazioni per scegliere il primo intervento di riduzione dei riflessi.
+Output: `output/02_analisi_riflessi/test_01/` e `test_02/`.
 
-Output previsto: `output/02_analisi_riflessi/test_01/`. Nessun file originale va modificato; nessuna fusione o rimozione nel primo step.
+## Prossimo passo — Test 03
+
+**Creare localmente `2_reflection_step3.py`.** Prima di un'altra fusione, verificare se gli scatti registrati mostrino davvero texture del legno meglio leggibile nelle zone con riflesso. Testare l'intero violino, bordi compresi, con confronto a pixel nativi e zone di controllo. Generare una mappa diagnostica e pochi confronti leggibili.
+
+**Decisione:** fusione selettiva solo se esistono dettagli recuperabili; altrimenti ripensare la tecnica.
 
 ## Regole
 
-- Proseguire **dal nostro codice originale**, senza recuperare algoritmi o ROI degli esperimenti Codex.
-- Un esperimento alla volta: obiettivo, metodo, risultati e conclusione.
-- Conservare la risoluzione nativa per i dati; resize soltanto delle anteprime.
-- Repository GitHub: **solo documentazione**. TIFF, codice Python e output restano sul PC.
+- Non usare codice/ROI degli esperimenti Codex; proseguire dal nostro percorso.
+- Non sovrascrivere `images/`, Fase 1 o Test 01–02.
+- Lavorare sui pixel nativi; ridurre soltanto le anteprime.
+- Un esperimento alla volta; pochi output utili.
+- Repository GitHub solo Markdown; immagini, codice e output **solo locali**.
