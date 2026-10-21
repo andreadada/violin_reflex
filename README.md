@@ -10,9 +10,9 @@ Documentazione del progetto di Computer Vision: ridurre i riflessi sulla superfi
 | --- | --- | --- |
 | 0 · Acquisizione | [docs/00_acquisizione.md](docs/00_acquisizione.md) | Documentata |
 | 1 · Registrazione | [docs/01_registrazione.md](docs/01_registrazione.md) | Completata e verificata |
-| 2 · Riduzione fotografica dei riflessi | [docs/02_riduzione_riflessi.md](docs/02_riduzione_riflessi.md) | Test 01–02 svolti; risultato non soddisfacente |
+| 2 · Riduzione fotografica dei riflessi | [docs/02_riduzione_riflessi.md](docs/02_riduzione_riflessi.md) | Test 02: attenuazione parziale visibile della macchia principale |
 
-**Prossimo passo:** `2_reflection_step3.py` — verificare su tutto il violino, bordi inclusi, dove le singole illuminazioni conservino informazioni utili a rimuovere i riflessi. Nessuna nuova fusione prima di questa verifica.
+**Prossimo passo:** `2_reflection_step3.py` — partire dalla fusione del Test 02 e capire perché attenua la macchia principale più degli altri riflessi; verificare i dettagli disponibili nei donatori prima di migliorarla.
 
 Per riprendere il lavoro: [docs/HANDOFF.md](docs/HANDOFF.md).
 
