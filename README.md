@@ -1,13 +1,13 @@
 # Violin Reflection Removal
 
-Documentazione del progetto di Computer Vision per studiare e ridurre i riflessi nelle fotografie di un violino, preservando il dettaglio del legno.
+Documentazione del progetto di Computer Vision per migliorare la fotografia di un violino attenuando i riflessi indesiderati, senza perdere colore e venature.
 
 ## Dataset
 
-Cinque TIFF della stessa scena (5504 × 8256 px):
+Cinque TIFF a 5504 × 8256 px, conservati **solo in locale**:
 
 - `Base.tif`: quattro luci accese.
-- `Riflesso_1.tif`–`Riflesso_4.tif`: una sola luce accesa per scatto.
+- `Riflesso_1.tif`–`Riflesso_4.tif`: una luce accesa per scatto.
 
 ## Avanzamento
 
@@ -15,12 +15,10 @@ Cinque TIFF della stessa scena (5504 × 8256 px):
 | --- | --- | --- |
 | 0 · Acquisizione | [docs/00_acquisizione.md](docs/00_acquisizione.md) | Documentata |
 | 1 · Registrazione | [docs/01_registrazione.md](docs/01_registrazione.md) | Completata e verificata |
-| 2 · Analisi dei riflessi | Da sviluppare | Non iniziata in questo percorso |
+| 2 · Riduzione fotografica dei riflessi | [docs/HANDOFF.md](docs/HANDOFF.md) | In preparazione |
 
-La registrazione usa Base come riferimento, Phase Correlation su Sobel e verifica indipendente sul violino. `Riflesso_4` ha richiesto una traslazione; gli altri tre scatti sono rimasti invariati.
+La registrazione è conclusa. Nella Fase 2 privilegiamo **la qualità estetica**, non la separazione fisica delle componenti luminose.
 
-## Riprendere il lavoro
+**Prossimo script locale:** `2_reflection_step1.py`, confronto visivo delle cinque fotografie registrate, senza modificare i TIFF.
 
-Leggere [docs/HANDOFF.md](docs/HANDOFF.md) per i file di riferimento, lo stato raggiunto e il prossimo esperimento.
-
-Questo repository contiene **solo documentazione**. Codice, TIFF e risultati restano nel progetto locale. Le fasi successive saranno documentate qui soltanto dopo un esperimento verificato.
+Questo repository contiene solo `README.md` e `docs/`: nessuna immagine, script o output fotografico.
