@@ -12,54 +12,39 @@ Individuare e attenuare riflessi indesiderati sulla vernice del violino, conserv
 - `images/Riflesso_1.tif`–`Riflesso_4.tif`: una luce accesa alla volta.
 - Dimensioni: **5504 × 8256 px**, RGB a 8 bit per canale.
 
-## Lavoro completato — Fase 1
+## Fase 1 — Registrazione completata
 
-| Script Python nel progetto locale | Scopo |
-| --- | --- |
-| `allineamento.py` | Primi overlay e gradienti Sobel |
-| `verifica_allineamento.py` | Stime su più zone indipendenti |
-| `registration.py` | Phase Correlation ed ECC traslazionale |
-| `registration_step2.py` | Confronto con ECC euclideo/rotazione |
-| `registration_step3.py` | Esportazione del TIFF registrato |
-| `registration_step4.py` | Verifica con punti caratteristici e Lucas–Kanade |
-| `registration_pipeline.py` | Pipeline consolidata per i quattro scatti |
-
-### Risultati verificati
+Gli script originali sono `allineamento.py`, `verifica_allineamento.py`, `registration.py`, `registration_step2.py`, `registration_step3.py`, `registration_step4.py` e `registration_pipeline.py`.
 
 | Scatto | Δx | Δy | Esito |
 | --- | ---: | ---: | --- |
 | Riflesso 1 | −0,843 px | −0,049 px | Invariato |
 | Riflesso 2 | +0,350 px | +0,111 px | Invariato |
 | Riflesso 3 | −0,236 px | −0,643 px | Invariato |
-| Riflesso 4 | −7,358 px | +0,269 px | Traslazione applicata |
+| Riflesso 4 | −7,358 px | +0,269 px | Registrato |
 
-Soglia prudenziale della pipeline: **1,5 px**. Per Riflesso 4, residuo mediano sui contorni del violino da **circa 7,47 px a 0,94 px**. Una soglia operativa non dimostra allineamento perfetto.
+Soglia prudenziale: **1,5 px**. Su Riflesso 4 il residuo mediano sui contorni del violino è passato da circa **7,47 px a 0,94 px**.
 
-**Output conservato:**
-`output/01_registrazione/test_01/`
-- `risultato/registered/`: quattro TIFF riferiti a Base.
-- `diagnostica/masks/`: maschere dei pixel validi.
-- `report/`: risultati e misure.
+Output confermati:
+`output/01_registrazione/test_01/risultato/registered/` (TIFF);
+`diagnostica/masks/` (pixel validi);
+`report/` (misure).
 
-Non ripetere la registrazione senza nuovi elementi che ne dimostrino la necessità.
+## Fase 2 — Miglioramento estetico (da iniziare)
 
-## Prossimo lavoro — Fase 2
+Indicazione del docente: non serve separare fisicamente le componenti luminose; serve una fotografia esteticamente migliore. La registrazione iniziale richiesta è già stata eseguita.
 
-**Partire dalla teoria, non da una correzione già progettata.**
+**Step 2.1 — `2_reflection_step1.py` (locale, ancora da creare):**
+1. Leggere Base e i quattro TIFF registrati.
+2. Produrre un confronto visivo delle cinque illuminazioni senza correzioni.
+3. Identificare le zone con riflessi fotograficamente fastidiosi.
+4. Usare le osservazioni per scegliere il primo intervento di riduzione dei riflessi.
 
-1. Distinguere le componenti di riflessione diffusa e speculare e discutere cosa è osservabile con quattro sorgenti separate.
-2. Individuare segnali confrontabili tra le cinque immagini già registrate, tenendo conto del diverso livello di illuminazione.
-3. Definire un piccolo esperimento diagnostico, con criteri di verifica prima di scrivere l'algoritmo.
-4. Documentare parametri, limiti e risultato; soltanto dopo valutare un metodo di correzione.
+Output previsto: `output/02_analisi_riflessi/test_01/`. Nessun file originale va modificato; nessuna fusione o rimozione nel primo step.
 
-**Nessun algoritmo di rimozione dei riflessi è validato nel percorso corrente.**
+## Regole
 
-## Regole di lavoro
-
-- Un esperimento alla volta: obiettivo → teoria → implementazione → verifica → conclusione.
-- Nessuna modifica a `images/` o agli output validati.
-- Calcoli e output fotografici a risoluzione nativa; eventuali resize solo per preview.
-- Risultati leggeri e organizzati; niente nuove interfacce prima di aver verificato il metodo.
-- Questo repository contiene soltanto `README.md` e documentazione in `docs/`.
-
-**Perimetro:** il presente handoff riprende soltanto il percorso originale fino alla registrazione. Gli esperimenti successivi separati localmente non fanno parte di questa documentazione.
+- Proseguire **dal nostro codice originale**, senza recuperare algoritmi o ROI degli esperimenti Codex.
+- Un esperimento alla volta: obiettivo, metodo, risultati e conclusione.
+- Conservare la risoluzione nativa per i dati; resize soltanto delle anteprime.
+- Repository GitHub: **solo documentazione**. TIFF, codice Python e output restano sul PC.
