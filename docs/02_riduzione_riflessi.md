@@ -23,20 +23,20 @@ Una maschera cromatica delimita il violino; a scala 1:8 vengono scelti donatori 
 | Area eleggibile stimata | 33,81% dell'anteprima |
 | Alpha medio nelle zone candidate | 0,148 |
 
-**Esito visivo: insufficiente.** Il prima/dopo è quasi identico. Persistono riflessi evidenti vicino alle effe, nella zona alta a destra e sui bordi. La mappa d'intervento segnala soprattutto differenze d'illuminazione: non certifica la rimozione di riflessi.
+**Esito visivo: primo miglioramento parziale.** Il confronto mostra un'attenuazione visibile della macchia principale, soprattutto nella zona superiore destra, mantenendo un aspetto complessivamente naturale. Rimangono riflessi vicino alle effe e sui bordi. La mappa d'intervento indica dove sono cambiati i pixel, non dimostra una separazione fisica dei riflessi.
 
-**Limite del metodo:** il punteggio premia cromaticità e luminosità, ma non verifica che un donatore conservi davvero venature più leggibili. Aumentare l'intensità rischia di scurire il legno o creare aloni. Test 02 non approvato come risultato finale.
+**Limite del metodo:** il punteggio premia cromaticità e luminosità, ma non verifica che un donatore conservi davvero venature più leggibili. Aumentare indiscriminatamente l'intensità rischia di scurire il legno o creare aloni. **Test 02 da conservare come prima candidata promettente, non come risultato finale.**
 
 ## Prossimo esperimento — Test 03
 
-**`2_reflection_step3.py` — Verifica della qualità dei donatori.**
+**`2_reflection_step3.py` — Analisi e miglioramento della fusione del Test 02.**
 
-- Analizzare l'intera superficie, **anche il bordo**, partendo dalle cinque immagini registrate e dalle maschere di validità.
-- Confrontare aree omologhe a **pixel nativi**, includendo zone lucide e zone sane di controllo. Separare esposizione generale da visibilità della texture.
-- Produrre una tavola di confronti e una mappa dei candidati **senza creare ancora una nuova fusione**.
-- Verificare visivamente se almeno una fotografia mostra dettagli autentici meglio leggibili dove Base ha il riflesso.
+- Prendere il Test 02 come punto di partenza: capire perché attenua la macchia principale.
+- Confrontare a **pixel nativi** i donatori nelle zone ancora lucide, **bordi inclusi**, e nelle zone sane di controllo.
+- Verificare dove sono effettivamente visibili dettagli utili, distinguendoli da semplici differenze di esposizione.
+- Solo dopo la verifica, modificare selettivamente il metodo per estendere il miglioramento senza scurire la superficie.
 
-**Criterio di decisione:** se l'informazione utile esiste, progettare una correzione globale ma selettiva; altrimenti cambiare approccio, non intensificare il blend.
+**Criterio di decisione:** mantenere il miglioramento già ottenuto e aumentare la qualità fotografica senza introdurre perdita di venature o aloni.
 
 ## Vincoli
 
