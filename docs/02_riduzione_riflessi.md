@@ -27,16 +27,29 @@ Una maschera cromatica delimita il violino; a scala 1:8 vengono scelti donatori 
 
 **Limite del metodo:** il punteggio premia cromaticità e luminosità, ma non verifica che un donatore conservi davvero venature più leggibili. Aumentare indiscriminatamente l'intensità rischia di scurire il legno o creare aloni. **Test 02 da conservare come prima candidata promettente, non come risultato finale.**
 
-## Prossimo esperimento — Test 03
+## Test 03 — Verifica delle aree da migliorare
 
-**`2_reflection_step3.py` — Analisi e miglioramento della fusione del Test 02.**
+**Script locale:** `2_reflection_step3.py`  
+**Output:** `output/02_analisi_riflessi/test_03/`
 
-- Prendere il Test 02 come punto di partenza: capire perché attenua la macchia principale.
-- Confrontare a **pixel nativi** i donatori nelle zone ancora lucide, **bordi inclusi**, e nelle zone sane di controllo.
-- Verificare dove sono effettivamente visibili dettagli utili, distinguendoli da semplici differenze di esposizione.
-- Solo dopo la verifica, modificare selettivamente il metodo per estendere il miglioramento senza scurire la superficie.
+Confronti a pixel nativi tra Base, Test 02 e i quattro donatori (anche normalizzati). Nessun TIFF modificato.
 
-**Criterio di decisione:** mantenere il miglioramento già ottenuto e aumentare la qualità fotografica senza introdurre perdita di venature o aloni.
+| Area analizzata | Delta luminosità medio Base−Test 02 |
+| --- | ---: |
+| Zona migliorata, parte superiore destra | +21,52/255 |
+| «Riflesso residuo» (ponticello) | +2,46/255 |
+| «Bordo» (cordiera) | +0,05/255 |
+| Legno sano di controllo | +0,00/255 |
+
+**Osservazione:** la riduzione luminosa nella prima area è consistente con l'attenuazione visibile del riflesso. Ma il selettore automatico ha individuato ponticello e cordiera al posto di altri riflessi sul legno. Non usare queste scelte come maschere di correzione.
+
+## Test 04 — Fusione protetta (da verificare)
+
+**Script locale:** `2_reflection_step4.py`, preparato e testato tecnicamente su immagini sintetiche; **non eseguito sul dataset reale**.
+
+Riutilizza pesi e guadagni del Test 02. Aggiunge una maschera cromatica del legno, con verifica dei pixel alla risoluzione nativa; incrementa moderatamente la forza nei soli punti già candidati. Intende evitare interventi su corde, ponticello e cordiera. Non garantisce di correggere i riflessi totalmente bianchi o azzurri sui bordi.
+
+**Output previsto:** `output/02_analisi_riflessi/test_04/`, con TIFF fullres, confronto Base/Test 02/Test 04, mappa, maschera e report. Valutare al 100% macchia principale, bordi, effe e zone sane prima di trarre conclusioni.
 
 ## Vincoli
 
