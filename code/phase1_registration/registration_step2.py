@@ -1,10 +1,18 @@
 """STEP 2 - Confronto registrazione: Phase, ECC traslazione, ECC Euclidean.
 
-Esegui nella root del progetto: python registration_step2.py
+Esegui nella root del progetto: python code/phase1_registration/registration_step2.py
 Prerequisiti: registration.py dello Step 1, images/Base.tif, images/Riflesso_4.tif.
 
 SOLO diagnostica: i TIFF originali non vengono modificati, e non vengono
 ancora creati nuovi TIFF. Tutte le stime usano pixel alla risoluzione nativa.
+
+
+SCHEDA DEL FILE (riferita al progetto locale)
+Obiettivo: Confrontare la sola traslazione con un modello che ammette anche la rotazione.
+Input: Base e Riflesso 4 originali; funzioni di registration.py.
+Output: Report e trasformazioni in output/registration/step2_rotazione/.
+Fasi: Stime Phase; ECC traslazionale/euclideo; verifica indipendente.
+Risultato atteso: Selezionare e motivare una trasformazione affidabile.
 """
 
 from pathlib import Path
@@ -19,7 +27,7 @@ import numpy as np
 # L'importazione NON esegue il suo main(), grazie al controllo __name__.
 import registration as reg
 
-OUT = Path(__file__).resolve().parent / "output" / "registration" / "step2_rotazione"
+OUT = Path(__file__).resolve().parents[2] / "output" / "registration" / "step2_rotazione"
 OUT.mkdir(parents=True, exist_ok=True)
 
 # Solo queste due aree della tavola colori stimano la trasformazione.
@@ -206,6 +214,7 @@ def valuta(base, moving, metodi):
 
 
 def scrivi_report(rows, mats, scores, phase, reason):
+    """Scrive le stime, le matrici di trasformazione e le valutazioni della prova."""
     with (OUT / '03_residui.csv').open('w', encoding='utf-8', newline='') as file:
         cw = csv.writer(file)
         cw.writerow(['zona', 'tipo_zona', 'metodo', 'dx_residuo', 'dy_residuo',
@@ -240,6 +249,7 @@ def scrivi_report(rows, mats, scores, phase, reason):
 
 
 def main():
+    """Esegue il confronto tra modelli traslazionale ed euclideo su Riflesso 4."""
     base = reg.leggi_grigio('Base.tif')
     moving = reg.leggi_grigio('Riflesso_4.tif')
     if base.shape != moving.shape:

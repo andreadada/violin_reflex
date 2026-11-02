@@ -4,8 +4,9 @@
 Pipeline **generale** di riduzione fotografica dei riflessi usando scatti dello stesso soggetto con illuminazioni diverse. Il violino è il dataset di prova, **non una soluzione custom**. Serve una foto più bella, senza richiedere una decomposizione fisica rigorosa. [Dettagli](00_obiettivo.md).
 
 ## Disponibile in GitHub
-- Fase 1: `registration_pipeline.py` e i 6 script esplorativi originali di registrazione.
-- Fase 2: `2_reflection_step1.py` … `2_reflection_step4.py`.
+- Fase 1: `code/phase1_registration/registration_pipeline.py` e i 6 script esplorativi originali di registrazione.
+- Fase 2: `code/phase2_reflection/2_reflection_step1.py` … `2_reflection_step4.py`.
+- Convenzioni: [CONVENZIONI_CODICE.md](CONVENZIONI_CODICE.md).
 - [Acquisizione](00_acquisizione.md), [registrazione](01_registrazione.md), [test](02_riduzione_riflessi.md).
 
 **Solo locali:** `images/`, `output/`, `codex_experiments/`. Non usare il lavoro Codex per proseguire. Non caricare TIFF su GitHub.
@@ -32,6 +33,10 @@ Output locali: `output/02_analisi_riflessi/test_01/` … `test_04/`. **Non sovra
 Partire da **`2_reflection_step2.py`**. Progettare una selezione/fusione che non dipenda dalle soglie cromatiche del legno né da ROI fisse. Distinguere differenze di illuminazione dai riflessi effettivamente attenuabili. Prima un test circoscritto con verifica a pixel nativi e confronto con Test 02; poi eventualmente estendere all'intero soggetto. Verificare su un secondo dataset diverso, se disponibile, prima di dichiarare il metodo generale.
 
 In futuro: parametri configurabili e applicazione, **non subito**.
+
+## Uso dopo la riorganizzazione
+
+Eseguire dalla radice locale: `python code/phase2_reflection/2_reflection_step3.py --help`. Gli script risolvono `images/` e `output/` rispetto alla radice, anche se sono dentro `code/`. Test 03 e 04 caricano Test 02 dalla stessa cartella; `registration_step2.py` importa `registration.py` dalla propria cartella. I percorsi degli output validati **non cambiano**. I file originali sono stati spostati sotto `code/` e commentati senza riprogettare i metodi.
 
 ## Regole
 Un esperimento alla volta; foto, maschere e TIFF sempre locali; non modificare originali o output precedenti. Le misure di pixel modificati **non provano** la qualità estetica. Aggiornare la documentazione dopo ogni valutazione.

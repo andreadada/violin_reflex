@@ -8,7 +8,7 @@ Questo script NON ALLINEA E NON MODIFICA alcun TIFF: legge tre immagini gia'
 esistenti e crea SOLO report CSV/JSON e immagini diagnostiche PNG.
 
 Requisiti: python -m pip install opencv-python numpy
-Avvio:     python registration_step4.py
+Avvio:     python code/phase1_registration/registration_step4.py
 
 Percorsi richiesti, dalla cartella principale del progetto:
   images/Base.tif
@@ -25,6 +25,14 @@ Come funziona, in breve:
 
 ATTENZIONE: le diverse luci possono falsare anche il tracking dei punti.
 Questo e' un test indipendente di algoritmo, non una misura fisica perfetta.
+
+
+SCHEDA DEL FILE (riferita al progetto locale)
+Obiettivo: Verificare geometricamente la registrazione usando punti caratteristici indipendenti.
+Input: Base, Riflesso 4 originale e registrato, trasformazione usata.
+Output: CSV, JSON e anteprime in output/registration/step4_punti/.
+Fasi: Individuare punti; tracking Lucas–Kanade; controlli avanti/indietro e residui.
+Risultato atteso: Misurare il miglioramento senza riscrivere gli scatti.
 """
 from __future__ import annotations
 
@@ -35,7 +43,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[2]
 BASE = ROOT / "images" / "Base.tif"
 ORIGINALE = ROOT / "images" / "Riflesso_4.tif"
 REGISTRATO = ROOT / "output" / "registered" / "Riflesso_4_registered.tif"
@@ -277,6 +285,7 @@ def aggrega(rows: list) -> dict:
 
 
 def write_csv(path:Path,rows:list) -> None:
+    """Salva le misure dei punti e dei residui in un file CSV."""
     if not rows: return
     with path.open('w',encoding='utf-8',newline='') as f:
         writer=csv.DictWriter(f,fieldnames=list(rows[0].keys()))
@@ -284,6 +293,7 @@ def write_csv(path:Path,rows:list) -> None:
 
 
 def resize_preview(im:np.ndarray,max_height=1200) -> tuple[np.ndarray,float]:
+    """Riduce soltanto l'anteprima per rendere leggibile il confronto."""
     h,w=im.shape[:2]
     s=min(1.0,max_height/h)
     if s==1: return im.copy(),s

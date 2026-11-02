@@ -1,6 +1,6 @@
 """STEP 1 - Image Registration con Phase Correlation + ECC (sola traslazione).
 
-Esegui: python registration.py
+Esegui: python code/phase1_registration/registration.py
 
 Confronta Base.tif e Riflesso_4.tif, misura gli spostamenti sulla tavola
 colori e confronta la traslazione iniziale con il raffinamento ECC.
@@ -10,6 +10,14 @@ IMPORTANTE:
 - Le anteprime diagnostiche non sono TIFF registrati.
 - Non altera ne' sovrascrive mai i TIFF di input.
 - La versione corrente NON stima rotazione o scala: sara' lo step successivo.
+
+
+SCHEDA DEL FILE (riferita al progetto locale)
+Obiettivo: Provare la registrazione traslazionale di Riflesso 4 rispetto a Base.
+Input: images/Base.tif e images/Riflesso_4.tif.
+Output: Report e anteprime diagnostiche in output/registration/step1_ecc/.
+Fasi: Stima Phase Correlation; raffinamento ECC; confronto dei contorni.
+Risultato atteso: Valutare la qualità di una traslazione, senza creare il TIFF finale.
 """
 
 from pathlib import Path
@@ -21,7 +29,7 @@ import numpy as np
 # ------------------------------------------------------
 # BLOCCO 1: cartelle e regioni di analisi
 # ------------------------------------------------------
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[2]
 IMMAGINI = ROOT / "images"
 OUTPUT = ROOT / "output" / "registration" / "step1_ecc"
 OUTPUT.mkdir(parents=True, exist_ok=True)
@@ -178,6 +186,7 @@ def pannello(immagine, titolo):
 
 
 def main():
+    """Confronta stime Phase/ECC nelle zone di calibrazione e verifica, producendo report."""
     # --------------------------------------------------
     # BLOCCO 2: carichiamo due TIFF, senza modificare file.
     # --------------------------------------------------

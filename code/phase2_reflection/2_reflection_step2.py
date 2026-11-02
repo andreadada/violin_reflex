@@ -1,7 +1,7 @@
 """FASE 2 / STEP 2 — Prima correzione fotografica selettiva del violino.
 
 Esegui dalla radice di ViolinReflectionRemoval:
-    python 2_reflection_step2.py
+    python code/phase2_reflection/2_reflection_step2.py
 
 Input: images/Base.tif, 4 TIFF registrati, 4 maschere di validita' dalla Fase 1.
 Output: output/02_analisi_riflessi/test_02/ (TIFF, confronto e mappa).
@@ -13,6 +13,15 @@ Non usa le ROI degli esperimenti precedenti e non altera i TIFF sorgente.
 
 Dipendenze: numpy, opencv-python, tifffile; imagecodecs se i TIFF LZW
 sono letti con tifffile (altrimenti e' disponibile il fallback OpenCV).
+
+
+SCHEDA DEL FILE (riferita al progetto locale)
+Obiettivo: Provare una prima fusione fotografica automatica per attenuare i riflessi.
+Input: Base, quattro TIFF registrati e quattro maschere di validità.
+Output: TIFF full-res, mappa e confronto in output/02_analisi_riflessi/test_02/.
+Fasi: Maschera cromatica; bilanciamento lento dei donatori; punteggio; fusione a strisce native.
+Risultato atteso: Attenuazione parziale dei riflessi mantenendo un aspetto naturale.
+Nota: Migliore risultato osservato nel dataset corrente, NON ancora algoritmo generale: la maschera è legata al colore del legno.
 """
 from __future__ import annotations
 
@@ -32,6 +41,7 @@ MAX_DELTA_CHIARO = 22.0
 
 
 def percorsi(root: Path):
+    """Restituisce i percorsi dei cinque TIFF e delle quattro maschere di validità."""
     fase1 = root / 'output' / '01_registrazione' / 'test_01'
     base = root / 'images' / 'Base.tif'
     scatti = [fase1 / 'risultato' / 'registered' / f'Riflesso_{i}_registered.tif'
@@ -56,12 +66,14 @@ def apri_rgb(path: Path) -> np.ndarray:
 
 
 def anteprima(rgb: np.ndarray, larghezza: int, altezza: int) -> np.ndarray:
+    """Ridimensiona un'immagine soltanto per analisi e visualizzazione."""
     if rgb.dtype == np.uint16:
         rgb = (rgb >> 8).astype(np.uint8)
     return cv2.resize(rgb, (larghezza, altezza), interpolation=cv2.INTER_AREA)
 
 
 def luce(rgb8: np.ndarray) -> np.ndarray:
+    """Calcola un indicatore di luminosità RGB, non una misura radiometrica."""
     return cv2.cvtColor(rgb8, cv2.COLOR_RGB2GRAY).astype(np.float32)
 
 
@@ -189,12 +201,14 @@ def scala_striscia(mappa: np.ndarray, y0: int, y1: int, h: int, w: int) -> np.nd
 
 
 def icc_originale(path: Path) -> bytes | None:
+    """Legge l'eventuale profilo ICC per conservarlo nell'output fotografico."""
     with tifffile.TiffFile(path) as tf:
         tag = tf.pages[0].tags.get(34675)
         return bytes(tag.value) if tag is not None else None
 
 
 def esegui(root: Path, out: Path, preview_width: int = 760) -> None:
+    """Esegue la fusione a risoluzione nativa a strisce e salva TIFF e diagnostiche."""
     base_path, paths, path_valid = percorsi(root)
     mancanti = [p for p in [base_path, *paths, *path_valid] if not p.is_file()]
     if mancanti:
@@ -289,8 +303,9 @@ def esegui(root: Path, out: Path, preview_width: int = 760) -> None:
 
 
 def main() -> None:
+    """Legge le opzioni CLI e avvia il Test 02 senza sovrascrivere risultati precedenti."""
     parser = argparse.ArgumentParser(description='Fase 2, primo test globale di riduzione dei riflessi')
-    parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parent,
+    parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[2],
                         help='Cartella ViolinReflectionRemoval')
     parser.add_argument('--out', type=Path, default=None,
                         help='Directory vuota di destinazione (default: test_02)')

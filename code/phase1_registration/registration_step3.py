@@ -11,7 +11,15 @@ selezionata e gia' verificata nello Step 2 (04_trasformazioni.json).
 L'originale resta intatto. Per installare le librerie:
     python -m pip install opencv-python numpy tifffile
 
-USO: python registration_step3.py
+USO: python code/phase1_registration/registration_step3.py
+
+
+SCHEDA DEL FILE (riferita al progetto locale)
+Obiettivo: Applicare al TIFF originale di Riflesso 4 la trasformazione selezionata.
+Input: Riflesso_4.tif, Base.tif, trasformazione salvata nel Test precedente.
+Output: TIFF registrato e diagnostiche in output/registered/ e output/registration/step3_export/.
+Fasi: Leggere la matrice; applicare un solo warp; validare ed esportare.
+Risultato atteso: Un'immagine allineata a Base senza alterare il TIFF di origine.
 """
 
 from pathlib import Path
@@ -27,7 +35,7 @@ import tifffile
 # ======================================================
 # BLOCCO 1 — Percorsi dei file, relativi a questo script
 # ======================================================
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[2]
 DIR_IMAGES = ROOT / "images"
 DIR_PARAMS = ROOT / "output" / "registration" / "step2_rotazione"
 DIR_TIFF = ROOT / "output" / "registered"
@@ -188,6 +196,7 @@ def overlay_grigi(a, b):
 
 
 def pannello_bgr(imm, titolo):
+    """Prepara un pannello BGR con etichetta per le diagnostiche."""
     h, w = imm.shape[:2]
     canvas = np.full((h+52, w, 3), 24, dtype=np.uint8)
     canvas[52:] = imm
@@ -197,11 +206,13 @@ def pannello_bgr(imm, titolo):
 
 
 def salva_png(path, array):
+    """Esporta un'immagine diagnostica verificando l'esito della scrittura."""
     if not cv2.imwrite(str(path), array):
         raise IOError(f"Salvataggio PNG fallito: {path}")
 
 
 def main():
+    """Carica la trasformazione scelta, registra Riflesso 4 e verifica il TIFF esportato."""
     # ======================================================
     # BLOCCO 2 — Leggiamo e validiamo matrice e TIFF originali
     # ======================================================

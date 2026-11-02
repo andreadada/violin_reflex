@@ -1,3 +1,14 @@
+"""FASE 1 — Studio esplorativo della registrazione.
+
+SCHEDA DEL FILE (riferita al progetto locale)
+Obiettivo: Esplorare progressivamente il confronto geometrico tra Base e gli scatti illuminati separatamente.
+Input: images/Base.tif e images/Riflesso_1.tif ... Riflesso_4.tif.
+Output: PNG e CSV in output/allineamento/ (esperimenti storici).
+Fasi: Ritagli di controllo; gradienti Sobel; confronto dei contorni; stime di spostamento.
+Risultato atteso: Diagnostiche per comprendere il disallineamento, non TIFF corretti.
+Nota: Script storico con istruzioni eseguite direttamente: eseguirlo soltanto per ripetere quelle prove.
+"""
+
 
 from pathlib import Path
 
@@ -9,7 +20,7 @@ import numpy as np
 # ==========================================
 
 # 1. Prepariamo i percorsi.
-CARTELLA = Path(__file__).resolve().parent
+CARTELLA = Path(__file__).resolve().parents[2]
 IMMAGINI = CARTELLA / "images"
 OUTPUT = CARTELLA / "output" / "allineamento"
 
@@ -50,6 +61,7 @@ crop_base = base[y0:y1, x0:x1]
 # ==========================================
 
 def sobel(immagine):
+    """Calcola l'intensità dei contorni tramite gradienti Sobel, utile al confronto geometrico."""
 
     # 1. Riduciamo leggermente il rumore.
     # Il filtro agisce soltanto sul ritaglio usato per l'analisi.

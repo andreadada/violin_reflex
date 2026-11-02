@@ -1,22 +1,41 @@
 # Violin Reflection Removal
 
-Pipeline di Computer Vision per **ridurre i riflessi e migliorare esteticamente** fotografie multi-scatto dello stesso soggetto con illuminazioni diverse. Il violino è il primo dataset, non il limite dell'algoritmo.
+Pipeline di Computer Vision per attenuare i riflessi in **più fotografie dello stesso soggetto con luci differenti**. Il violino è il primo dataset, non il limite dell'algoritmo. Obiettivo: una fotografia più bella e naturale, non una decomposizione fisica rigorosa della luce.
+
+## Avanzamento
+
+- **Fase 1 — Registrazione:** completata e validata. Script principale: `code/phase1_registration/registration_pipeline.py`.
+- **Fase 2 — Riduzione dei riflessi:** Test 01–04 eseguiti. **Test 02** è la migliore baseline visiva; Test 04 non è stato preferito.
+- **Prossimo esperimento:** Test 05, criteri di fusione meno dipendenti dal colore e dalla forma del violino.
+
+## Struttura
+
+```text
+code/
+  phase1_registration/  # registrazione e verifiche storiche
+  phase2_reflection/    # Test 01–04
+docs/                  # obiettivo, acquisizione, risultati, handoff
+images/                # SOLO LOCALE: TIFF originali
+output/                # SOLO LOCALE: TIFF registrati e test
+```
+
+Gli script leggono `images/` e `output/` dalla **radice del progetto**, anche se il codice è organizzato in `code/`. Eseguire dal terminale PyCharm aperto nella radice:
+
+```bash
+pip install -r requirements.txt
+python code/phase2_reflection/2_reflection_step2.py --help
+python code/phase2_reflection/2_reflection_step3.py --help
+```
+
+**Attenzione:** il Test 02 produce `output/02_analisi_riflessi/test_02/`; se esiste già, non rilanciarlo senza scegliere un `--out` nuovo. I Test 03–04 caricano il Test 02 dalla stessa cartella `phase2_reflection/`.
 
 ## Documentazione
-- [Obiettivo e criteri](docs/00_obiettivo.md)
-- [Acquisizione](docs/00_acquisizione.md)
-- [Fase 1: registrazione](docs/01_registrazione.md) — validata
-- [Fase 2: esperimenti](docs/02_riduzione_riflessi.md) — Test 01–04
-- [HANDOFF](docs/HANDOFF.md) — stato, decisioni e prossimi passi
 
-**Baseline attuale: Test 02.** Attenua visibilmente il riflesso principale conservando un aspetto naturale. Il Test 04 non è preferito e introduce una maschera cromatica più specifica del violino.
+1. [Obiettivo generale](docs/00_obiettivo.md)
+2. [Acquisizione](docs/00_acquisizione.md)
+3. [Registrazione](docs/01_registrazione.md)
+4. [Esperimenti sui riflessi](docs/02_riduzione_riflessi.md)
+5. [Regole per i commenti](docs/CONVENZIONI_CODICE.md)
+6. **[HANDOFF: stato e prossimo passo](docs/HANDOFF.md)**
 
-## Codice del nostro percorso
-- Fase 1: `registration_pipeline.py` (pipeline consolidata); `allineamento.py`, `verifica_allineamento.py`, `registration.py`, `registration_step2.py`, `registration_step3.py`, `registration_step4.py` (sviluppo e verifiche).
-- Fase 2: `2_reflection_step1.py` fino a `2_reflection_step4.py`.
-
-Installazione: `pip install -r requirements.txt`. Gli script vanno eseguiti nella root del progetto; non rigenerare la Fase 1 se gli output validati sono già disponibili.
-
-**Dataset e risultati soltanto sul PC:** `images/`, `output/`, `codex_experiments/` non sono caricati su GitHub. La documentazione riporta le osservazioni e le misure, ma il codice da solo non riproduce gli output senza i TIFF locali.
-
-Il focus è la qualità visiva, **non** una separazione fisica rigorosa delle componenti della luce.
+GitHub contiene **script Python e documentazione**. Le fotografie e gli output restano esclusivamente sul PC; `codex_experiments/` non fa parte del lavoro corrente.

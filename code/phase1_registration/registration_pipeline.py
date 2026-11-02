@@ -1,9 +1,9 @@
 """FASE 1 — Image Registration delle quattro fotografie del violino.
 
 USO (dalla radice del progetto):
-    python registration_pipeline.py
-    python registration_pipeline.py --dry-run
-    python registration_pipeline.py --root F:\\intelliJProjects\\ViolinReflectionRemoval
+    python code/phase1_registration/registration_pipeline.py
+    python code/phase1_registration/registration_pipeline.py --dry-run
+    python code/phase1_registration/registration_pipeline.py --root F:\\intelliJProjects\\ViolinReflectionRemoval
 
 Dipendenze: opencv-python, numpy, tifffile.
 Non modifica mai images/. Lavora su pixel a risoluzione originale. Le immagini
@@ -21,6 +21,15 @@ Strategia prudente (coerente con gli esperimenti precedenti):
 Gli indicatori di correlazione non sono probabilita' di correttezza. Una
 registrazione puo' essere geometricamente corretta e avere differenze rosso/
 ciano dovute alle diverse illuminazioni.
+
+
+SCHEDA DEL FILE (riferita al progetto locale)
+Obiettivo: Consolidare la registrazione geometrica prudente dei quattro scatti rispetto a Base.
+Input: Cinque TIFF originali in images/.
+Output: TIFF registrati/invariati, maschere valide e report in output/01_registrazione/test_01/.
+Fasi: Phase Correlation su Sobel nella tavola colori; verifica sul violino; singolo warp solo quando giustificato.
+Risultato atteso: Quattro immagini utilizzabili dalla Fase 2 e una decisione documentata per ogni scatto.
+Nota: Pipeline di riferimento: la Fase 1 è già validata, non rieseguirla senza necessità.
 """
 
 from __future__ import annotations
@@ -107,6 +116,7 @@ def load_rgb(path: Path, expected_shape: tuple[int, int, int], dtype: np.dtype) 
 
 
 def crop(gray: np.ndarray, position: tuple[float, float], size: int) -> np.ndarray:
+    """Estrae una ROI centrata sulle coordinate relative, senza ridurre i pixel."""
     h, w = gray.shape[:2]
     xc, yc = round(position[0] * w), round(position[1] * h)
     x0, y0 = xc - size // 2, yc - size // 2
@@ -169,6 +179,7 @@ def aligned_crop(moving: np.ndarray, position: tuple[float,float], size: int,
 
 
 def phase_on_chart(base: np.ndarray, moving: np.ndarray, size: int) -> tuple[dict, tuple | None, str]:
+    """Stima la traslazione su due zone della tavola colori e verifica che concordino."""
     measures: dict[str, dict] = {}
     accepted = []
     for name, pos in CALIBRAZIONE.items():
@@ -310,6 +321,7 @@ def panel(image: np.ndarray, title: str, description: str = '', width: int = 340
 def diagnostic_png(path: Path, base_gray: np.ndarray, moving_gray: np.ndarray,
                    pos: tuple[float,float], size: int, dx: float, dy: float,
                    title: str, applied: bool) -> None:
+    """Crea un'immagine diagnostica della registrazione, separata dall'output nativo."""
     a, b = crop(base_gray, pos, size), crop(moving_gray, pos, size)
     # Mostriamo l'output EFFETTIVO, non una correzione candidata poi scartata.
     c = aligned_crop(moving_gray, pos, size, dx, dy) if applied else b.copy()
@@ -375,6 +387,7 @@ def make_overlay_grid(output: Path, statuses: list[dict]) -> None:
 
 
 def run(root: Path, output: Path, size: int, dry_run: bool, no_preview: bool) -> dict:
+    """Coordina controlli, stima, verifica, eventuale warp e report senza sovrascrivere output esistenti."""
     root, output = root.resolve(), output.resolve()
     images = root / 'images'
     files = [images/f'Riflesso_{i}.tif' for i in range(1,5)]
@@ -491,8 +504,9 @@ def run(root: Path, output: Path, size: int, dry_run: bool, no_preview: bool) ->
 
 
 def main() -> None:
+    """Legge gli argomenti CLI e avvia la pipeline con la root del progetto corretta."""
     p=argparse.ArgumentParser(description='Consolida Phase Registration sulle 4 immagini TIFF a piena risoluzione')
-    p.add_argument('--root',type=Path,default=Path(__file__).resolve().parent,
+    p.add_argument('--root',type=Path,default=Path(__file__).resolve().parents[2],
                    help='Root con images/Base.tif e Riflesso_1..4.tif')
     p.add_argument('--out',type=Path,default=None,help='Cartella output (vuota/nuova)')
     p.add_argument('--crop-size',type=int,default=640,help='Lato ritagli in pixel originali')

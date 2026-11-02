@@ -11,7 +11,7 @@
 3. Per spostamenti rilevanti, verificare il miglioramento su aree indipendenti del violino.
 4. Applicare una sola interpolazione al TIFF RGB originale, soltanto se la correzione è accettata.
 
-La pipeline consolidata è `registration_pipeline.py`; gli script `registration.py` e `registration_step2.py`–`registration_step4.py` documentano le verifiche preliminari (ECC e tracking Lucas–Kanade).
+La pipeline consolidata è `code/phase1_registration/registration_pipeline.py`; nella stessa cartella gli script `registration.py` e `registration_step2.py`–`registration_step4.py` documentano le verifiche preliminari (ECC e tracking Lucas–Kanade).
 
 ## Risultati
 

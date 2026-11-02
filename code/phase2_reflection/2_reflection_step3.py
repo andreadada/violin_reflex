@@ -1,8 +1,8 @@
 """FASE 2 / TEST 03 — Valuta la fusione del Test 02 senza modificarla.
 
 Da ViolinReflectionRemoval:
-    python 2_reflection_step3.py
-    python 2_reflection_step3.py --crop 640
+    python code/phase2_reflection/2_reflection_step3.py
+    python code/phase2_reflection/2_reflection_step3.py --crop 640
 
 Richiede i cinque TIFF (Base + quattro registrati), le relative maschere di
 validita' e output/02_analisi_riflessi/test_02/01_correzione_globale.tif.
@@ -13,6 +13,15 @@ sovrascrittura di risultati precedenti. Il punteggio delle aree e' un'euristica
 per scegliere cosa OSSERVARE, non identifica riflessi con certezza.
 
 Dipendenze: numpy, opencv-python, tifffile (imagecodecs per TIFF compressi).
+
+
+SCHEDA DEL FILE (riferita al progetto locale)
+Obiettivo: Analizzare dove la fusione del Test 02 ha funzionato e dove restano riflessi.
+Input: Base, donatori registrati, maschere e TIFF corretto del Test 02.
+Output: Ritagli comparativi e report in output/02_analisi_riflessi/test_03/.
+Fasi: Individuazione euristica delle zone; crop a pixel nativi; confronti di donatori anche normalizzati.
+Risultato atteso: Diagnosi dei limiti del Test 02 senza generare un nuovo TIFF corretto.
+Nota: La scelta delle zone è euristica: alcuni candidati individuati erano ponticello e cordiera.
 """
 from __future__ import annotations
 
@@ -28,7 +37,8 @@ SCALE = 8  # solo mappe diagnostiche: i ritagli restano a risoluzione originale
 
 
 def load_step2(root: Path):
-    path = root / '2_reflection_step2.py'
+    """Importa le funzioni del Test 02 dalla stessa cartella del codice."""
+    path = Path(__file__).resolve().with_name('2_reflection_step2.py')
     if not path.is_file():
         raise FileNotFoundError(f'Non trovo lo script precedente: {path}')
     spec = importlib.util.spec_from_file_location('reflection_phase2_step2', path)
@@ -40,14 +50,17 @@ def load_step2(root: Path):
 
 
 def gray(rgb: np.ndarray) -> np.ndarray:
+    """Converte il RGB in un'immagine monocromatica per le misure."""
     return cv2.cvtColor(rgb, cv2.COLOR_RGB2GRAY).astype(np.float32)
 
 
 def blur(img: np.ndarray, sigma: float) -> np.ndarray:
+    """Calcola una media spaziale graduale per ridurre il rumore della stima."""
     return cv2.GaussianBlur(img, (0, 0), sigma)
 
 
 def sample_preview(img: np.ndarray, w: int, h: int) -> np.ndarray:
+    """Prepara un'immagine ridotta per diagnostica, senza modificare i crop nativi."""
     if img.dtype == np.uint16:
         # Solo per la preview. I crop nativi mantengono il bit depth.
         img = (img >> 8).astype(np.uint8)
@@ -56,6 +69,7 @@ def sample_preview(img: np.ndarray, w: int, h: int) -> np.ndarray:
 
 def find_center(score: np.ndarray, allowed: np.ndarray, selected: list[tuple[int, int]],
                 sep: int, fallback: tuple[int, int]) -> tuple[int, int]:
+    """Sceglie una zona candidata dal punteggio, evitando quelle già selezionate."""
     h, w = score.shape
     ranked = np.where(allowed, blur(score.astype(np.float32), 14.0), -1.0)
     for x, y in selected:
@@ -68,12 +82,14 @@ def find_center(score: np.ndarray, allowed: np.ndarray, selected: list[tuple[int
 
 
 def crop_origin(center: tuple[int, int], crop: int, width: int, height: int) -> tuple[int, int]:
+    """Calcola l'angolo del ritaglio mantenendolo dentro l'immagine."""
     x, y = center
     return max(0, min(width - crop, x - crop // 2)), max(0, min(height - crop, y - crop // 2))
 
 
 def normalized_crop(rgb: np.ndarray, gain_small: np.ndarray, x0: int, y0: int,
                     crop: int, native_w: int, native_h: int) -> np.ndarray:
+    """Applica soltanto al ritaglio il guadagno lento stimato dal Test 02."""
     small_h, small_w = gain_small.shape[:2]
     xx = (np.arange(x0, x0 + crop, dtype=np.float32) + 0.5) * small_w / native_w - 0.5
     yy = (np.arange(y0, y0 + crop, dtype=np.float32) + 0.5) * small_h / native_h - 0.5
@@ -86,10 +102,12 @@ def normalized_crop(rgb: np.ndarray, gain_small: np.ndarray, x0: int, y0: int,
 
 
 def to8(rgb: np.ndarray) -> np.ndarray:
+    """Converte una copia di lavoro a 8 bit per le sole anteprime."""
     return rgb if rgb.dtype == np.uint8 else (rgb >> 8).astype(np.uint8)
 
 
 def tile(rgb: np.ndarray, label: str) -> np.ndarray:
+    """Inserisce il ritaglio in un pannello con l'etichetta della sorgente."""
     rgb8 = to8(rgb)
     height, width = rgb8.shape[:2]
     canvas = np.full((height + 30, width, 3), (27, 27, 27), np.uint8)
@@ -100,6 +118,7 @@ def tile(rgb: np.ndarray, label: str) -> np.ndarray:
 
 
 def run(root: Path, out: Path, crop: int):
+    """Confronta Base, donatori e Test 02 su zone candidate, senza correggere i TIFF."""
     step2 = load_step2(root)
     base_path, donor_paths, mask_paths = step2.percorsi(root)
     corrected_path = root / 'output' / '02_analisi_riflessi' / 'test_02' / '01_correzione_globale.tif'
@@ -220,8 +239,9 @@ def run(root: Path, out: Path, crop: int):
 
 
 def main():
+    """Legge root, output e dimensione del crop e avvia la diagnostica."""
     parser = argparse.ArgumentParser(description='Fase 2 Test 03 — verifica della fusione esistente')
-    parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parent,
+    parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[2],
                         help='Radice del progetto locale')
     parser.add_argument('--out', type=Path, default=None,
                         help='Cartella di output nuova/vuota')

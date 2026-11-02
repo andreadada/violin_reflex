@@ -1,12 +1,20 @@
 """FASE 2 / STEP 1 — Confronto fotografico delle cinque illuminazioni.
 
 Esecuzione dalla radice di ViolinReflectionRemoval:
-    python 2_reflection_step1.py
-    python 2_reflection_step1.py --roi 2200 3000 600 600
+    python code/phase2_reflection/2_reflection_step1.py
+    python code/phase2_reflection/2_reflection_step1.py --roi 2200 3000 600 600
 
 Nessuna correzione, fusione o modifica ai TIFF. Il ritaglio --roi è facoltativo:
 coordinate X Y LARGHEZZA ALTEZZA nella Base, in pixel originali.
 Dipendenze: numpy, opencv-python, tifffile (come la Fase 1).
+
+
+SCHEDA DEL FILE (riferita al progetto locale)
+Obiettivo: Confrontare visivamente Base e le quattro illuminazioni registrate.
+Input: Base e quattro TIFF registered/ della Fase 1.
+Output: Panoramica e ritagli facoltativi in output/02_analisi_riflessi/test_01/.
+Fasi: Caricamento e controlli; anteprime omologhe; confronto senza correzione.
+Risultato atteso: Identificare differenze visive e zone da esaminare, senza creare un TIFF corretto.
 """
 
 from __future__ import annotations
@@ -24,6 +32,7 @@ ETICHETTE = ["BASE - 4 luci"] + [f"RIFLESSO {i} - luce {i}" for i in range(1, 5)
 
 
 def file_immagini(root: Path) -> list[Path]:
+    """Ricava i percorsi locali della Base e dei quattro TIFF registrati."""
     registrate = root / "output" / "01_registrazione" / "test_01" / "risultato" / "registered"
     return [root / "images" / "Base.tif"] + [
         registrate / f"Riflesso_{i}_registered.tif" for i in range(1, 5)
@@ -31,6 +40,7 @@ def file_immagini(root: Path) -> list[Path]:
 
 
 def caratteristiche(path: Path) -> tuple[tuple[int, int, int], np.dtype]:
+    """Legge dimensioni e tipo del TIFF senza elaborarne tutti i pixel."""
     with tifffile.TiffFile(path) as tf:
         serie = tf.series[0]
         forma = tuple(serie.shape)
@@ -69,13 +79,15 @@ def pannello(rgb8: np.ndarray, etichetta: str) -> np.ndarray:
 
 
 def salva_png(path: Path, image_bgr: np.ndarray) -> None:
+    """Salva l'anteprima e segnala eventuali problemi di scrittura."""
     if not cv2.imwrite(str(path), image_bgr):
         raise OSError(f"Impossibile scrivere: {path}")
 
 
 def main() -> None:
+    """Verifica gli input e genera il confronto; la ROI è facoltativa."""
     parser = argparse.ArgumentParser(description="Fase 2: confronto visivo, senza modificare i TIFF")
-    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parent,
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2],
                         help="Cartella ViolinReflectionRemoval (default: cartella dello script)")
     parser.add_argument("--out", type=Path, default=None,
                         help="Directory di output; default: output/02_analisi_riflessi/test_01")

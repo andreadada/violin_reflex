@@ -4,11 +4,19 @@ INSTALLAZIONE (nel terminale di PyCharm):
     pip install opencv-python numpy
 
 ESECUZIONE:
-    python verifica_allineamento.py
+    python code/phase1_registration/verifica_allineamento.py
 
 Lo script misura gli spostamenti; NON sposta, ritaglia o modifica i TIFF.
 Tutti i confronti avvengono su piccoli ritagli di pixel ORIGINALI,
 senza ridimensionare le immagini di partenza.
+
+
+SCHEDA DEL FILE (riferita al progetto locale)
+Obiettivo: Misurare su più regioni i possibili spostamenti tra Base e gli altri scatti.
+Input: Cinque TIFF originali in images/.
+Output: Misure e immagini diagnostiche in output/allineamento/.
+Fasi: Ritagli nativi; gradienti; correlazione; confronto fra regioni.
+Risultato atteso: Indizi di allineamento, senza modificare gli originali.
 """
 
 from pathlib import Path
@@ -20,7 +28,7 @@ import numpy as np
 
 # 1) Percorsi: lo script sta nella cartella principale del progetto,
 #    accanto alla sottocartella "images" che contiene i 5 TIFF originali.
-CARTELLA = Path(__file__).resolve().parent
+CARTELLA = Path(__file__).resolve().parents[2]
 IMMAGINI = CARTELLA / "images"
 RISULTATI = CARTELLA / "output" / "allineamento"
 RISULTATI.mkdir(parents=True, exist_ok=True)
@@ -47,6 +55,7 @@ ZONE = {
 
 
 def leggi_grigio(percorso):
+    """Carica lo scatto in grigio per stimare la geometria, senza modificarne il file."""
     # 4) La conversione in grigio serve SOLO a misurare i contorni.
     #    OpenCV legge il TIFF senza cambiarne le dimensioni.
     foto = cv2.imread(str(percorso), cv2.IMREAD_GRAYSCALE)
@@ -56,6 +65,7 @@ def leggi_grigio(percorso):
 
 
 def ritaglio(foto, x_rel, y_rel, lato):
+    """Estrae una finestra a pixel nativi intorno alla posizione relativa indicata."""
     # 5) Estraiamo esattamente lo STESSO rettangolo dalle due foto.
     altezza, larghezza = foto.shape
     cx, cy = round(x_rel * larghezza), round(y_rel * altezza)
@@ -66,6 +76,7 @@ def ritaglio(foto, x_rel, y_rel, lato):
 
 
 def contorni(foto):
+    """Rappresenta i bordi dell'immagine con il gradiente Sobel."""
     # 6) I quattro scatti hanno LUCI differenti: confrontare direttamente
     #    la luminosità può dare un falso disallineamento.
     #    Con Sobel evidenziamo i contorni (venature, effe, scacchiera),
@@ -78,6 +89,7 @@ def contorni(foto):
 
 
 def misura_spostamento(base, altra):
+    """Stima lo spostamento relativo fra due ritagli di riferimento."""
     # 7) Phase correlation confronta i contorni e stima di QUANTI PIXEL
     #    la seconda immagine risulta spostata rispetto alla prima.
     #    Restituisce anche un indice di qualità ('risposta'), tipicamente
@@ -89,6 +101,7 @@ def misura_spostamento(base, altra):
 
 
 def salva_anteprima(base, altra, nome):
+    """Esporta un confronto diagnostico leggibile senza toccare i TIFF."""
     # 8) Salviamo un controllo VISIVO su tre ritagli nativi.
     #    Rosso = Base, ciano = altra immagine: se i bordi si separano,
     #    possono esserci disallineamenti. Differenze di luce NON provano
@@ -107,6 +120,7 @@ def salva_anteprima(base, altra, nome):
 
 
 def esamina(base, altra, nome, righe):
+    """Misura più zone dello scatto e raccoglie le stime nel report."""
     # 9) Una misura singola può sbagliare quando cambia il riflesso.
     #    Misuriamo perciò 8 aree e calcoliamo lo spostamento mediano.
     misure = []
@@ -155,6 +169,7 @@ def esamina(base, altra, nome, righe):
 
 
 def main():
+    """Esegue i controlli sulle quattro fotografie e salva misure e anteprime."""
     # 12) Carichiamo Base una sola volta. Le altre foto vengono lette
     #     una alla volta, così non dobbiamo tenere 5 immagini da 45 MP in RAM.
     base = leggi_grigio(IMMAGINI / "Base.tif")

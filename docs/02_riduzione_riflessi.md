@@ -2,6 +2,8 @@
 
 **Goal:** attenuare i riflessi in immagini multi-scatto con illuminazioni diverse, preservando un aspetto naturale. Il violino è un caso di prova; evitare soluzioni dipendenti dalle sue caratteristiche. Vedi [obiettivo](00_obiettivo.md).
 
+Gli script sono in `code/phase2_reflection/` e sono eseguibili dalla root del progetto. I TIFF e gli output locali restano nelle cartelle originali.
+
 | Test | Script | Risultato |
 | --- | --- | --- |
 | 01 | `2_reflection_step1.py` | Confronto delle cinque illuminazioni; nessuna correzione |

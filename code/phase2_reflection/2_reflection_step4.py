@@ -1,7 +1,7 @@
 """FASE 2 / TEST 04 — Fusione selettiva protetta, evoluzione del Test 02.
 
 Nella radice del progetto locale:
-    python 2_reflection_step4.py
+    python code/phase2_reflection/2_reflection_step4.py
 
 Richiede 2_reflection_step2.py, Base.tif, i 4 TIFF registrati,
 le 4 maschere di validita' della Fase 1 e il TIFF del Test 02.
@@ -16,6 +16,15 @@ fotometrico credibile. Non promette una separazione fisica dei riflessi.
 
 Dipendenze: numpy, opencv-python, tifffile. Per TIFF LZW compressi
 potrebbe essere necessario imagecodecs; OpenCV e' il fallback.
+
+
+SCHEDA DEL FILE (riferita al progetto locale)
+Obiettivo: Valutare una fusione del Test 02 con maggiore protezione delle parti non in legno.
+Input: Base, donatori registrati, maschere e TIFF del Test 02.
+Output: Nuovo TIFF e diagnostiche in output/02_analisi_riflessi/test_04/.
+Fasi: Ricalcolare i pesi del Test 02; maschera cromatica più selettiva; fusione conservativa.
+Risultato atteso: Correzione con meno alterazioni delle parti non in legno; da verificare visivamente.
+Nota: Test 04 non preferito a Test 02. Le soglie cromatiche NON generalizzano ad altri soggetti.
 """
 from __future__ import annotations
 
@@ -36,7 +45,8 @@ BRIGHTEN_LIMIT = 20.0
 
 
 def load_step2(root: Path):
-    path = root / '2_reflection_step2.py'
+    """Carica la logica di selezione dei donatori dal Test 02."""
+    path = Path(__file__).resolve().with_name('2_reflection_step2.py')
     if not path.is_file():
         raise FileNotFoundError(f'Serve lo script Test 02 in {path}')
     spec = importlib.util.spec_from_file_location('violin_step02_for_step04', path)
@@ -82,11 +92,13 @@ def apply_native_wood_gate(base_rgb: np.ndarray) -> np.ndarray:
 
 
 def save_png(path: Path, bgr: np.ndarray) -> None:
+    """Esporta una mappa o un confronto diagnostico, controllando la scrittura."""
     if not cv2.imwrite(str(path), bgr):
         raise OSError(f'Non riesco a salvare {path}')
 
 
 def run(root: Path, out: Path, preview_width: int = 700) -> None:
+    """Riutilizza Test 02 applicando la protezione cromatica e salva una nuova candidata."""
     step2 = load_step2(root)
     base_path, donor_paths, mask_paths = step2.percorsi(root)
     previous = root / 'output/02_analisi_riflessi/test_02/01_correzione_globale.tif'
@@ -209,8 +221,9 @@ Nessun originale e nessun risultato precedente modificato.
 
 
 def main():
+    """Imposta root e output e lancia il Test 04 lasciando intatti i precedenti."""
     parser = argparse.ArgumentParser(description='Test 04 — Fusione selettiva protetta')
-    parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parent)
+    parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument('--out', type=Path, default=None)
     parser.add_argument('--preview-width', type=int, default=700)
     args = parser.parse_args()
