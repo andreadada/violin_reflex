@@ -27,6 +27,29 @@ def calcola_indicatore(immagine):
     ...
 ```
 
+## Template breve per documentare una fase
+
+```markdown
+# Fase N — Titolo
+
+## Obiettivo
+Quale problema risolviamo.
+
+## Input e metodo
+Quali scatti usiamo e come li elaboriamo.
+
+## Risultato
+Cosa cambia rispetto al test precedente; pochi dati verificabili.
+
+## Limiti e decisione
+Cosa non funziona, cosa conserviamo e perché.
+
+## Prossimo passo
+Un esperimento concreto da eseguire.
+```
+
+Documentare **soltanto risultati osservati**, distinguendo test tecnici e validazione estetica.
+
 ## Principi di manutenzione
 
 - Un test = uno script; nomi coerenti con `test_01/`, `test_02/` ecc.
