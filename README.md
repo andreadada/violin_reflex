@@ -10,9 +10,9 @@ Documentazione del progetto di Computer Vision: ridurre i riflessi sulla superfi
 | --- | --- | --- |
 | 0 · Acquisizione | [docs/00_acquisizione.md](docs/00_acquisizione.md) | Documentata |
 | 1 · Registrazione | [docs/01_registrazione.md](docs/01_registrazione.md) | Completata e verificata |
-| 2 · Riduzione fotografica dei riflessi | [docs/02_riduzione_riflessi.md](docs/02_riduzione_riflessi.md) | Test 02: attenuazione parziale visibile della macchia principale |
+| 2 · Riduzione fotografica dei riflessi | [docs/02_riduzione_riflessi.md](docs/02_riduzione_riflessi.md) | Test 01–03 svolti; Test 04 pronto da provare |
 
-**Prossimo passo:** `2_reflection_step3.py` — partire dalla fusione del Test 02 e capire perché attenua la macchia principale più degli altri riflessi; verificare i dettagli disponibili nei donatori prima di migliorarla.
+**Prossimo passo locale:** `2_reflection_step4.py` — evoluzione del Test 02: maschera del legno più selettiva e intensità moderatamente maggiore. Il Test 03 ha mostrato che la ricerca automatica delle zone confondeva anche ponticello e cordiera. Valutare il nuovo risultato a zoom 100% prima di considerarlo un miglioramento.
 
 Per riprendere il lavoro: [docs/HANDOFF.md](docs/HANDOFF.md).
 
