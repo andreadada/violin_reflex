@@ -1,19 +1,22 @@
 # Violin Reflection Removal
 
-Documentazione del progetto di Computer Vision: ridurre i riflessi sulla superficie del violino, preservando colore, venature e aspetto naturale.
+Pipeline di Computer Vision per **ridurre i riflessi e migliorare esteticamente** fotografie multi-scatto dello stesso soggetto con illuminazioni diverse. Il violino è il primo dataset, non il limite dell'algoritmo.
 
-**Dataset locale:** `Base.tif` (4 luci accese), `Riflesso_1.tif`–`Riflesso_4.tif` (una luce ciascuno). TIFF 5504 × 8256 px.
+## Documentazione
+- [Obiettivo e criteri](docs/00_obiettivo.md)
+- [Acquisizione](docs/00_acquisizione.md)
+- [Fase 1: registrazione](docs/01_registrazione.md) — validata
+- [Fase 2: esperimenti](docs/02_riduzione_riflessi.md) — Test 01–04
+- [HANDOFF](docs/HANDOFF.md) — stato, decisioni e prossimi passi
 
-## Avanzamento
+**Baseline attuale: Test 02.** Attenua visibilmente il riflesso principale conservando un aspetto naturale. Il Test 04 non è preferito e introduce una maschera cromatica più specifica del violino.
 
-| Fase | Documento | Stato |
-| --- | --- | --- |
-| 0 · Acquisizione | [docs/00_acquisizione.md](docs/00_acquisizione.md) | Documentata |
-| 1 · Registrazione | [docs/01_registrazione.md](docs/01_registrazione.md) | Completata e verificata |
-| 2 · Riduzione fotografica dei riflessi | [docs/02_riduzione_riflessi.md](docs/02_riduzione_riflessi.md) | Test 01–03 svolti; Test 04 pronto da provare |
+## Codice del nostro percorso
+- Fase 1: `registration_pipeline.py` (pipeline consolidata); `allineamento.py`, `verifica_allineamento.py`, `registration.py`, `registration_step2.py`, `registration_step3.py`, `registration_step4.py` (sviluppo e verifiche).
+- Fase 2: `2_reflection_step1.py` fino a `2_reflection_step4.py`.
 
-**Prossimo passo locale:** `2_reflection_step4.py` — evoluzione del Test 02: maschera del legno più selettiva e intensità moderatamente maggiore. Il Test 03 ha mostrato che la ricerca automatica delle zone confondeva anche ponticello e cordiera. Valutare il nuovo risultato a zoom 100% prima di considerarlo un miglioramento.
+Installazione: `pip install -r requirements.txt`. Gli script vanno eseguiti nella root del progetto; non rigenerare la Fase 1 se gli output validati sono già disponibili.
 
-Per riprendere il lavoro: [docs/HANDOFF.md](docs/HANDOFF.md).
+**Dataset e risultati soltanto sul PC:** `images/`, `output/`, `codex_experiments/` non sono caricati su GitHub. La documentazione riporta le osservazioni e le misure, ma il codice da solo non riproduce gli output senza i TIFF locali.
 
-**Solo documentazione in GitHub:** codice Python, TIFF e output restano sul PC.
+Il focus è la qualità visiva, **non** una separazione fisica rigorosa delle componenti della luce.

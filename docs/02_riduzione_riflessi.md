@@ -1,56 +1,47 @@
 # 02 — Riduzione fotografica dei riflessi
 
-**Obiettivo:** migliorare esteticamente l'intero violino, bordi inclusi, senza separare fisicamente luce diffusa e speculare. Base è il riferimento fotografico; le altre quattro immagini sono già registrate.
+**Goal:** attenuare i riflessi in immagini multi-scatto con illuminazioni diverse, preservando un aspetto naturale. Il violino è un caso di prova; evitare soluzioni dipendenti dalle sue caratteristiche. Vedi [obiettivo](00_obiettivo.md).
 
-## Test 01 — Confronto delle illuminazioni
+| Test | Script | Risultato |
+| --- | --- | --- |
+| 01 | `2_reflection_step1.py` | Confronto delle cinque illuminazioni; nessuna correzione |
+| 02 | `2_reflection_step2.py` | Fusione selettiva; **migliore risultato attuale** |
+| 03 | `2_reflection_step3.py` | Analisi nativa dei donatori e di Test 02; nessuna nuova correzione |
+| 04 | `2_reflection_step4.py` | Maschera del legno più selettiva; **non preferito** a Test 02 |
 
-**Script locale:** `2_reflection_step1.py`  
-**Output:** `output/02_analisi_riflessi/test_01/`
+## Test 02 — baseline
+Fusione basata su normalizzazione lenta dei donatori, cromaticità, luminosità ed esposizione, mantenendo Base come riferimento.
 
-Panoramica affiancata delle cinque fotografie, senza modificarle. Base ha l'illuminazione più equilibrata; i singoli scatti presentano zone diversamente illuminate e riflessi in posizioni differenti. Nessuno sostituisce da solo Base. Il confronto a dimensione ridotta non basta a giudicare la trama del legno.
+- **4.872.007 pixel** modificati ≥1 livello: **10,72%** del fotogramma.
+- Alpha medio nelle zone candidate: **0,148**.
+- **Riduzione visibile** del riflesso principale sulla parte alta destra; resa complessivamente naturale.
+- Altri riflessi (incluse zone del bordo) restano. Anche Test 02 contiene **euristiche legate al dataset**: non è una soluzione generale validata.
 
-## Test 02 — Fusione selettiva
+Output locale: `output/02_analisi_riflessi/test_02/01_correzione_globale.tif`.
 
-**Script locale:** `2_reflection_step2.py`  
-**Output:** `output/02_analisi_riflessi/test_02/`
+## Test 03 — cosa abbiamo verificato
+Confronto a pixel nativi tra Base, Test 02 e i quattro donatori (anche normalizzati).
 
-Una maschera cromatica delimita il violino; a scala 1:8 vengono scelti donatori tramite saturazione, luminanza, esposizione e coerenza della tonalità. La fusione è applicata sul TIFF a risoluzione nativa, mantenendo Base come riferimento.
-
-| Misura | Risultato |
+| Area | Differenza media Base−Test 02 |
 | --- | ---: |
-| Immagine | 5504 × 8256 px, RGB uint8 |
-| Pixel modificati ≥ 1 livello | 4.872.007 (10,72% del fotogramma) |
-| Area eleggibile stimata | 33,81% dell'anteprima |
-| Alpha medio nelle zone candidate | 0,148 |
+| Macchia migliorata | +21,52/255 |
+| «Riflesso residuo» — in realtà ponticello | +2,46/255 |
+| «Bordo» — in realtà cordiera | +0,05/255 |
+| Legno sano | +0,00/255 |
 
-**Esito visivo: primo miglioramento parziale.** Il confronto mostra un'attenuazione visibile della macchia principale, soprattutto nella zona superiore destra, mantenendo un aspetto complessivamente naturale. Rimangono riflessi vicino alle effe e sui bordi. La mappa d'intervento indica dove sono cambiati i pixel, non dimostra una separazione fisica dei riflessi.
+La selezione automatica delle aree è stata **in parte errata**. La riduzione di luminanza è coerente con l'attenuazione visibile della macchia, ma non dimostra una separazione fisica dei riflessi.
 
-**Limite del metodo:** il punteggio premia cromaticità e luminosità, ma non verifica che un donatore conservi davvero venature più leggibili. Aumentare indiscriminatamente l'intensità rischia di scurire il legno o creare aloni. **Test 02 da conservare come prima candidata promettente, non come risultato finale.**
+## Test 04 — risultato reale
+Maschera cromatica specifica del legno, con alpha Test 02 × **1,35** (limite **0,72**) e limiti al delta RGB.
 
-## Test 03 — Verifica delle aree da migliorare
+- Pixel modificati rispetto a Base: **5.583.326 (12,29%)**.
+- Diversi dal Test 02: **5.035.582 (11,08%)**.
+- Nella comparazione Base/Test 02/Test 04, **Test 02 è preferito visivamente**: sembra più pulito e naturale.
+- La maschera basata sul legno arancione **non generalizza** su colori/materiali diversi; può escludere i riflessi bianchi/azzurri.
 
-**Script locale:** `2_reflection_step3.py`  
-**Output:** `output/02_analisi_riflessi/test_03/`
+**Decisione:** conservare Test 02 come baseline. Test 04 rimane un esperimento utile ma non una revisione approvata.
 
-Confronti a pixel nativi tra Base, Test 02 e i quattro donatori (anche normalizzati). Nessun TIFF modificato.
+## Prossimo esperimento — Test 05
+Ripartire dal Test 02 e studiare criteri di scelta dei donatori/riflessi **indipendenti dal colore specifico del soggetto**. Verificare i dettagli disponibili e il rischio di ombre/aloni prima di cambiare l'algoritmo. Confrontare sempre con Base e Test 02.
 
-| Area analizzata | Delta luminosità medio Base−Test 02 |
-| --- | ---: |
-| Zona migliorata, parte superiore destra | +21,52/255 |
-| «Riflesso residuo» (ponticello) | +2,46/255 |
-| «Bordo» (cordiera) | +0,05/255 |
-| Legno sano di controllo | +0,00/255 |
-
-**Osservazione:** la riduzione luminosa nella prima area è consistente con l'attenuazione visibile del riflesso. Ma il selettore automatico ha individuato ponticello e cordiera al posto di altri riflessi sul legno. Non usare queste scelte come maschere di correzione.
-
-## Test 04 — Fusione protetta (da verificare)
-
-**Script locale:** `2_reflection_step4.py`, preparato e testato tecnicamente su immagini sintetiche; **non eseguito sul dataset reale**.
-
-Riutilizza pesi e guadagni del Test 02. Aggiunge una maschera cromatica del legno, con verifica dei pixel alla risoluzione nativa; incrementa moderatamente la forza nei soli punti già candidati. Intende evitare interventi su corde, ponticello e cordiera. Non garantisce di correggere i riflessi totalmente bianchi o azzurri sui bordi.
-
-**Output previsto:** `output/02_analisi_riflessi/test_04/`, con TIFF fullres, confronto Base/Test 02/Test 04, mappa, maschera e report. Valutare al 100% macchia principale, bordi, effe e zone sane prima di trarre conclusioni.
-
-## Vincoli
-
-Nessuna sovrascrittura dei TIFF o degli output validati. Codice e immagini restano nel progetto locale; GitHub contiene soltanto documentazione.
+Le percentuali indicano pixel modificati, **non la quantità di riflesso rimossa**. Tutti i TIFF e le anteprime restano in `output/02_analisi_riflessi/` sul PC.
