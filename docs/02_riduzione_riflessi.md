@@ -12,6 +12,7 @@ Gli script sono in `code/phase2_reflection/` e sono eseguibili dalla root del pr
 | 04 | `2_reflection_step4.py` | Maschera del legno più selettiva; **non preferito** a Test 02 |
 | 05 | `2_reflection_step5.py` | Diagnostica multi-luce, ampia corrispondenza ma molti falsi positivi |
 | 05B | `2_reflection_step5b.py` | Bilanciamento + microcontrasto; **valutato**, falsi positivi su ponticello e corde |
+| 05C | `2_reflection_step5c.py` | Top-hat/DoG multi-scala e penalità contorni; **test tecnico sintetico OK, da valutare su foto reali** |
 
 ## Test 02 — baseline
 Fusione basata su normalizzazione lenta dei donatori, cromaticità, luminosità ed esposizione, mantenendo Base come riferimento.
@@ -65,9 +66,19 @@ Input: Base, R1–R4 registrati; mappe a **688 × 1032** (scala 1:8). Lo script 
 
 **Decisione:** Test 05B è un'analisi utile, **non un rilevatore affidabile** e **non un miglioramento di Test 02**. Non creare una fusione basandosi sulla sola mappa 05B. Gli output sono in `output/02_analisi_riflessi/test_05b/` (tre PNG e `osservazioni.md`); nessun TIFF corretto e nessun dato originale modificato.
 
-## Prossima ipotesi da testare — Test 05C
+## Test 05C — script diagnostico preparato e provato su dati sintetici
+
+Lo script `code/phase2_reflection/2_reflection_step5c.py` è disponibile in GitHub. Riusa i metodi dei Test 05/05B, prepara mappe a scala 1:8, controlla il contrasto luminoso a più scale con **Top-hat (raggi 5/15/40 px sulla mappa)** e **DoG (sigma 3–10, 10–30, 25–65)**, confronta le quattro luci dopo il bilanciamento locale e penalizza in modo **morbido** i contorni persistenti. Non usa Hue del legno e non esclude rigidamente i bordi.
+
+**Prova tecnica:** esecuzione completata su TIFF RGB sintetici 960×1440, con cinque output creati e nessun TIFF modificato. Il dataset sintetico ha prodotto 5.665 pixel candidati sulla mappa 120×180 con soglia 0,10, ma **non è una misura di accuratezza**: non abbiamo effettuato una valutazione di ground truth e la percentuale di candidati è elevata. Alzare la soglia riduce i candidati, ma può nascondere riflessi reali.
+
+Output attesi sul dataset reale: `output/02_analisi_riflessi/test_05c/01_risposte_multiscala.png`, `02_confronto_illuminazioni.png`, `03_candidati_e_donatori.png`, `04_confronti_nativi.png` e `osservazioni.md`.
+
+**Non ancora validato sul violino**: verificare macchia alta a destra, bordi, ponticello/corde, legno sano e tavola colori. Test 02 resta la migliore fotografia. Test 05C non applica fusione.
+
+## Ipotesi da verificare sui TIFF reali — Test 05C
 Valutare **Top-hat e Difference of Gaussians multi-scala** per le anomalie luminose, separare il contributo dei **contorni strutturali** (Sobel/Canny), e confrontare i donatori *nello stesso punto* dopo bilanciamento d'illuminazione. Non creare maschere fissate sul colore arancione o ROI del violino. Usare ritagli nativi di **macchia diffusa**, **bordi**, **ponticello/corde**, **legno senza riflessi** per verificare veri e falsi positivi, non come vincoli per la soluzione.
 
-I concetti e le pagine del corso sono raccolti in [03_slide_corso.md](03_slide_corso.md). **Non è ancora stato eseguito Test 05C.**
+I concetti e le pagine del corso sono raccolti in [03_slide_corso.md](03_slide_corso.md). **Test 05C è implementato e tecnicamente eseguito su dati sintetici; non è ancora valutato sui TIFF reali.**
 
 Le percentuali di pixel modificati descrivono l'intervento, **non la quantità di riflesso rimossa**. I TIFF e le anteprime restano sul PC.

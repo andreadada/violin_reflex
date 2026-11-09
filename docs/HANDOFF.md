@@ -5,7 +5,7 @@ Pipeline **generale** di riduzione fotografica dei riflessi usando scatti dello 
 
 ## Disponibile in GitHub
 - Fase 1: `code/phase1_registration/registration_pipeline.py` e i 6 script esplorativi originali di registrazione.
-- Fase 2: `code/phase2_reflection/2_reflection_step1.py` … `2_reflection_step5b.py` (Test 05 e 05B inclusi).
+- Fase 2: `code/phase2_reflection/2_reflection_step1.py` … `2_reflection_step5c.py` (Test 01–05C inclusi).
 - Convenzioni: [CONVENZIONI_CODICE.md](CONVENZIONI_CODICE.md).
 - [Acquisizione](00_acquisizione.md), [registrazione](01_registrazione.md), [test](02_riduzione_riflessi.md), [slide del corso](03_slide_corso.md).
 
@@ -30,16 +30,28 @@ Usare gli output già presenti: `output/01_registrazione/test_01/risultato/regis
 - **Test 05:** confronto delle mappe candidate delle luci e di Base. Il 95,8% dei candidati Base ha una corrispondenza entro 5 px sulla mappa 1:8, **non è** una misura dell'accuratezza dei riflessi. La somma approssimata delle illuminazioni spiega solo parzialmente Base (R² holdout ~0,563). Molti falsi positivi su hardware, contorni e tavola colori.
 - **Test 05B — eseguito e valutato:** 38.530 pixel candidati (5,43% anteprima); selezioni R1/R2/R3/R4: 7.535/7.886/4.761/18.348. Nonostante gli indizi di dettaglio, il massimo score 0,608 è sul **ponticello**: il donatore R1 introduce una forte ombra, non un miglioramento certo. Il secondo candidato (score 0,299) mostra una dominante violacea/lucida. **Falsi positivi** su corde, contorni, ponticello e tavola colori; la macchia diffusa alta a destra non domina le mappe. Non usare Test 05B per la fusione.
 
+- **Test 05C — creato in GitHub e testato su TIFF sintetici:** script `code/phase2_reflection/2_reflection_step5c.py`. Top-hat/DoG multi-scala, confronto fotometrico multi-luce, penalità morbida di bordi persistenti e ombre, ritagli nativi. Ha generato i cinque file attesi sul fixture sintetico (960×1440). **Non è ancora validato sulle fotografie reali e non produce una correzione.**
+
 Output locali valutati: `output/02_analisi_riflessi/test_01/` … `test_05/` e `output/02_analisi_riflessi/test_05b/`. **Non sovrascriverli.**
 
-## Prossima azione — progettare Test 05C (non eseguito)
+## Prossima azione — valutare Test 05C reale
 
-1. Studiare **Top-hat morfologico e DoG a più scale** per picchi luminosi sottili e macchie diffuse; le scale vanno confrontate, non basta una soglia unica.
-2. Usare **Sobel/Canny** per distinguere contorni rigidi (corde, ponticello, sagoma) dalla texture da recuperare, senza cancellare indiscriminatamente i bordi, anch'essi potenzialmente riflettenti.
-3. Verificare il **confronto multi-illuminazione** e la coerenza dei dettagli dei donatori, penalizzando ombre e variazioni cromatiche e distinguendo le aree di controllo.
-4. Produrre **solo mappe e ritagli** confrontabili con Test 05/05B. Tornare alla fusione soltanto se i falsi positivi diminuiscono e la macchia principale viene identificata meglio.
+Dopo `git pull`, dalla root del progetto:
 
-Riferimenti alle slide del corso: [03_slide_corso.md](03_slide_corso.md) (CV02–CV06, pagine PDF). Le proposte delle slide **non sono ancora risultati sperimentali**. Conservare Test 02 come baseline. La generalità su altri soggetti resta **non dimostrata**.
+```powershell
+python code/phase2_reflection/2_reflection_step5c.py
+```
+
+Produce **solo** quattro PNG e `osservazioni.md` in `output/02_analisi_riflessi/test_05c/`; rifiuta di sovrascrivere una cartella già piena. Per una nuova prova usare `--out` differente.
+
+Verificare soprattutto:
+- il riflesso ampio **alto a destra** già attenuato in Test 02;
+- falsi positivi su ponticello/corde, tavola colori, bordi, legno sano;
+- eventuali ombre/dominanti nel donatore proposto e recupero dei dettagli reali.
+
+Le mappe 1:8 e il punteggio **non certificano** un riflesso. Nel fixture sintetico, soglia 0,10 → 5.665 candidati su 120×180: diagnostica permissiva, non accuratezza. Confrontare con Test 05/05B prima di decidere se correggere il metodo o passare alla fusione.
+
+Riferimenti del corso: [03_slide_corso.md](03_slide_corso.md). **Nessun risultato qualitativo su Test 05C reale ancora disponibile.** Conservare Test 02 come baseline.
 
 In futuro: parametri configurabili e applicazione, **non subito**.
 

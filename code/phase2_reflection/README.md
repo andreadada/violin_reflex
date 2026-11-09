@@ -10,6 +10,7 @@
 | `2_reflection_step4.py` | Maschera cromatica più restrittiva | Non preferito a Test 02 |
 | `2_reflection_step5.py` | Corrispondenza dei candidati multi-luce | Diagnostica con falsi positivi |
 | `2_reflection_step5b.py` | Confronto donatori, texture e controllo ombre | Valutato: falsi positivi su ponticello, corde, tavola colori |
+| `2_reflection_step5c.py` | Top-hat/DoG multi-scala + penalità bordi | Creato, test tecnico sintetico OK, valutazione reale da fare |
 
 Esecuzione dalla radice:
 
@@ -18,8 +19,8 @@ python code/phase2_reflection/2_reflection_step2.py --help
 python code/phase2_reflection/2_reflection_step3.py --help
 ```
 
-Le immagini originali restano in `images/`; registrati e maschere sono in `output/01_registrazione/test_01/`, risultati dei Test 01–05B in `output/02_analisi_riflessi/`.
+Le immagini originali restano in `images/`; registrati e maschere sono in `output/01_registrazione/test_01/`, risultati dei Test 01–05C in `output/02_analisi_riflessi/` (05C solo dopo esecuzione locale).
 
 **Non confondere la riduzione della luminosità con la rimozione di un riflesso.** I Test 02 e 04 includono regole cromatiche legate al violino; la prossima fase deve ridurre questa dipendenza dal dataset.
 
-**Prossimo:** Test 05C solo diagnostico, ispirato a [slide del corso](../../docs/03_slide_corso.md). Non iniziare la fusione senza risolvere i falsi positivi. Test 02 resta la migliore fotografia.
+**Prossimo:** eseguire **Test 05C** sui TIFF reali e confrontare i PNG con Test 05B; ispirato alle [slide del corso](../../docs/03_slide_corso.md). Non iniziare la fusione senza risolvere i falsi positivi. Test 02 resta la migliore fotografia.

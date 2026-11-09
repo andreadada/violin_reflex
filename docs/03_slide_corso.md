@@ -19,7 +19,7 @@ Le slide del corso **CV02–CV06** sono riferimenti didattici per progettare gli
 - **Sogliatura di Otsu:** utile per scegliere una soglia dai dati, **non** per garantire la correttezza semantica della maschera.
 - **Filtri per accentuare i dettagli:** aumentare il microcontrasto può anche accentuare rumore, corde e ombre, come visto nel Test 05B.
 
-## Ipotesi concreta per Test 05C — ancora da eseguire
+## Test 05C — implementato, ancora da valutare sul dataset reale
 
 1. Calcolare, per Base e donatori **registrati**, una risposta Top-hat e/o DoG **multi-scala** a partire da luminanza, prima e dopo una compensazione locale prudente.
 2. Affiancare una mappa di **gradienti/contorni forti** per valutare dove la risposta è dominata da corde, hardware o sagoma. Non costruire una maschera rigida che elimina automaticamente ogni bordo.
@@ -27,4 +27,4 @@ Le slide del corso **CV02–CV06** sono riferimenti didattici per progettare gli
 4. Produrre diagnostiche a scala 1:8 con controlli nativi nelle zone: macchia superiore destra, ponticello/corde, bordi, legno sano, tavola colori. I ritagli servono **solo per valutazione**, non diventano regole dell'algoritmo.
 5. Misurare **precisione dei candidati verificati visivamente** e quantità di veri riflessi mancati; confrontare qualitativamente con Test 05 e 05B. Evitare percentuali di 'riflessi riconosciuti' senza annotazioni affidabili.
 
-**Decisione attuale:** Test 02 è ancora la migliore versione fotografica. Non è stato eseguito Test 05C e nessuna tecnica citata è stata dimostrata migliore sul dataset. La valutazione su altri oggetti è necessaria per affermare la generalità.
+**Decisione attuale:** Test 02 è ancora la migliore versione fotografica. Lo script 05C è stato provato solo su un fixture sintetico: ancora nessuna tecnica citata è stata dimostrata migliore sul dataset reale. La valutazione su altri oggetti è necessaria per affermare la generalità.

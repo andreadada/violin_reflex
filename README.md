@@ -6,14 +6,14 @@ Pipeline di Computer Vision per attenuare i riflessi in **più fotografie dello 
 
 - **Fase 1 — Registrazione:** completata e validata. Script principale: `code/phase1_registration/registration_pipeline.py`.
 - **Fase 2 — Riduzione dei riflessi:** Test 01–05B eseguiti e valutati sul dataset; **Test 02** resta la migliore fotografia. I Test 05 e 05B sono diagnostici e hanno evidenziato falsi positivi.
-- **Prossimo esperimento proposto:** Test 05C diagnostico: Top-hat/DoG a più scale, controllo dei bordi e verifica tra illuminazioni; nessuna fusione finché i candidati non migliorano.
+- **Test 05C implementato, da verificare sui TIFF reali:** mappe Top-hat/DoG multi-scala, confronto delle illuminazioni e controllo morbido dei contorni. Il test sintetico verifica l'esecuzione, non il riconoscimento dei riflessi.
 
 ## Struttura
 
 ```text
 code/
   phase1_registration/  # registrazione e verifiche storiche
-  phase2_reflection/    # Test 01–05B
+  phase2_reflection/    # Test 01–05C
 docs/                  # obiettivo, acquisizione, risultati, handoff
 images/                # SOLO LOCALE: TIFF originali
 output/                # SOLO LOCALE: TIFF registrati e test
@@ -25,9 +25,10 @@ Gli script leggono `images/` e `output/` dalla **radice del progetto**, anche se
 pip install -r requirements.txt
 python code/phase2_reflection/2_reflection_step2.py --help
 python code/phase2_reflection/2_reflection_step3.py --help
+python code/phase2_reflection/2_reflection_step5c.py --help
 ```
 
-**Attenzione:** il Test 02 produce `output/02_analisi_riflessi/test_02/`; se esiste già, non rilanciarlo senza scegliere un `--out` nuovo. I Test 03–04 caricano il Test 02 dalla stessa cartella; Test 05B riutilizza le funzioni del Test 05 `phase2_reflection/`.
+**Attenzione:** il Test 02 produce `output/02_analisi_riflessi/test_02/`; se esiste già, non rilanciarlo senza scegliere un `--out` nuovo. I Test 03–04 caricano Test 02 dalla stessa cartella; Test 05B riutilizza Test 05; Test 05C riutilizza Test 05 e 05B (nella stessa cartella).
 
 ## Documentazione
 
