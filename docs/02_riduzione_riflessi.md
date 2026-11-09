@@ -11,7 +11,7 @@ Gli script sono in `code/phase2_reflection/` e sono eseguibili dalla root del pr
 | 03 | `2_reflection_step3.py` | Analisi nativa dei donatori e di Test 02; nessuna nuova correzione |
 | 04 | `2_reflection_step4.py` | Maschera del legno più selettiva; **non preferito** a Test 02 |
 | 05 | `2_reflection_step5.py` | Diagnostica multi-luce, ampia corrispondenza ma molti falsi positivi |
-| 05B | `2_reflection_step5b.py` | Bilanciamento luminoso + microcontrasto; **da valutare sui TIFF reali** |
+| 05B | `2_reflection_step5b.py` | Bilanciamento + microcontrasto; **valutato**, falsi positivi su ponticello e corde |
 
 ## Test 02 — baseline
 Fusione basata su normalizzazione lenta dei donatori, cromaticità, luminosità ed esposizione, mantenendo Base come riferimento.
@@ -48,9 +48,26 @@ Maschera cromatica specifica del legno, con alpha Test 02 × **1,35** (limite **
 ## Test 05 — risultati reali
 Mappa di eccessi luminosi locali e confronto tra Base e i singoli scatti a scala 1:8. **58.949 su 61.523 candidati Base (95,8%)** hanno almeno un candidato nelle singole illuminazioni entro cinque pixel di anteprima. Non è sensibilità/accuratezza del rilevatore: molte aree non sono riflessi (corde, contorni, tavola colori). La somma luminosa approssimata ha dato **R² holdout 0,5626** e non costituisce una ricostruzione fisicamente calibrata di Base.
 
-## Test 05B — diagnostica preparata
-Lo script `2_reflection_step5b.py` (usa funzioni di `2_reflection_step5.py`) confronta i quattro scatti dopo bilanciamento fotografico lento, calcola indizi da eccesso di luminosità di Base, microcontrasto e rischio d'ombra. Produce in `test_05b/` tre immagini e `osservazioni.md`. Nessun TIFF corretto. **Provato su TIFF sintetici, non ancora valutato sulle fotografie reali.**
+## Test 05B — risultati reali (diagnostica, non fusione)
+Input: Base, R1–R4 registrati; mappe a **688 × 1032** (scala 1:8). Lo script `2_reflection_step5b.py` riutilizza `2_reflection_step5.py`.
 
-**Decisione sospesa:** conservare Test 02 come baseline, controllare i ritagli nativi e i falsi positivi prima di progettare la fusione successiva.
+- **38.530 pixel candidati**, pari al **5,43%** del fotogramma in preview (soglia score 0,090).
+- Donatori scelti nei candidati R1–R4: **7.535 / 7.886 / 4.761 / 18.348**; R4 prevale nel **47,6%** delle selezioni, senza che ciò provi che sia il donatore migliore.
+- Mappa di microcontrasto: picchi forti su **corde, tastiera, ponticello, effe e tavola colori**, oltre a zone di legno. La macchia diffusa alta a destra non emerge tra le evidenze principali.
 
-Le percentuali indicano pixel modificati, **non la quantità di riflesso rimossa**. Tutti i TIFF e le anteprime restano in `output/02_analisi_riflessi/` sul PC.
+| Ritaglio nativo (centro) | Scatto | Score | Guadagno | Microcontrasto Base → donatore |
+| --- | --- | ---: | ---: | ---: |
+| (3060, 3772), ponticello | R1 | 0,608 | 1,594 | 0,0105 → 0,0108 |
+| (2516, 3772), ponticello/legno | R1 | 0,299 | 1,224 | 0,0087 → 0,0105 |
+| (3780, 5468), controllo legno | R3 | 0,022 | 1,810 | 0,0059 → 0,0071 |
+
+**Valutazione visiva:** il candidato 1 ha score alto ma R1 presenta **forte ombra sotto il ponticello**; il microcontrasto migliora appena. Il candidato 2 ha microcontrasto più alto ma presenta **zona violacea/lucida e ombra**, senza miglioramento fotografico convincente. La zona di controllo mostra che più microcontrasto non implica un riflesso correggibile. Le mappe includono ancora falsi positivi su componenti rigide e tavola colori.
+
+**Decisione:** Test 05B è un'analisi utile, **non un rilevatore affidabile** e **non un miglioramento di Test 02**. Non creare una fusione basandosi sulla sola mappa 05B. Gli output sono in `output/02_analisi_riflessi/test_05b/` (tre PNG e `osservazioni.md`); nessun TIFF corretto e nessun dato originale modificato.
+
+## Prossima ipotesi da testare — Test 05C
+Valutare **Top-hat e Difference of Gaussians multi-scala** per le anomalie luminose, separare il contributo dei **contorni strutturali** (Sobel/Canny), e confrontare i donatori *nello stesso punto* dopo bilanciamento d'illuminazione. Non creare maschere fissate sul colore arancione o ROI del violino. Usare ritagli nativi di **macchia diffusa**, **bordi**, **ponticello/corde**, **legno senza riflessi** per verificare veri e falsi positivi, non come vincoli per la soluzione.
+
+I concetti e le pagine del corso sono raccolti in [03_slide_corso.md](03_slide_corso.md). **Non è ancora stato eseguito Test 05C.**
+
+Le percentuali di pixel modificati descrivono l'intervento, **non la quantità di riflesso rimossa**. I TIFF e le anteprime restano sul PC.
