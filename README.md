@@ -5,8 +5,8 @@ Pipeline di Computer Vision per attenuare i riflessi in **più fotografie dello 
 ## Avanzamento
 
 - **Fase 1 — Registrazione:** completata e validata. Script principale: `code/phase1_registration/registration_pipeline.py`.
-- **Fase 2 — Riduzione dei riflessi:** Test 01–05B eseguiti e valutati sul dataset; **Test 02** resta la migliore fotografia. I Test 05 e 05B sono diagnostici e hanno evidenziato falsi positivi.
-- **Test 05C implementato, da verificare sui TIFF reali:** mappe Top-hat/DoG multi-scala, confronto delle illuminazioni e controllo morbido dei contorni. Il test sintetico verifica l'esecuzione, non il riconoscimento dei riflessi.
+- **Fase 2 — Riduzione dei riflessi:** Test 01–05C eseguiti e valutati sui TIFF reali; **Test 02** resta la migliore fotografia. I Test 05/05B/05C sono solo diagnostici e hanno falsi positivi.
+- **Test 05C valutato:** 84.857 candidati (11,95% preview); prima selezione errata sulla tavola colori, secondo candidato plausibile in alto a destra. **Prossimo:** piccolo insieme di zone annotate per valutare precisione e donatori, non nuova fusione.
 
 ## Struttura
 

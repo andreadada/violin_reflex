@@ -12,7 +12,7 @@ Gli script sono in `code/phase2_reflection/` e sono eseguibili dalla root del pr
 | 04 | `2_reflection_step4.py` | Maschera del legno più selettiva; **non preferito** a Test 02 |
 | 05 | `2_reflection_step5.py` | Diagnostica multi-luce, ampia corrispondenza ma molti falsi positivi |
 | 05B | `2_reflection_step5b.py` | Bilanciamento + microcontrasto; **valutato**, falsi positivi su ponticello e corde |
-| 05C | `2_reflection_step5c.py` | Top-hat/DoG multi-scala e penalità contorni; **test tecnico sintetico OK, da valutare su foto reali** |
+| 05C | `2_reflection_step5c.py` | Top-hat/DoG multi-scala; **valutato su TIFF reali**, candidati troppo estesi, falso positivo sulla tavola colori |
 
 ## Test 02 — baseline
 Fusione basata su normalizzazione lenta dei donatori, cromaticità, luminosità ed esposizione, mantenendo Base come riferimento.
@@ -66,19 +66,45 @@ Input: Base, R1–R4 registrati; mappe a **688 × 1032** (scala 1:8). Lo script 
 
 **Decisione:** Test 05B è un'analisi utile, **non un rilevatore affidabile** e **non un miglioramento di Test 02**. Non creare una fusione basandosi sulla sola mappa 05B. Gli output sono in `output/02_analisi_riflessi/test_05b/` (tre PNG e `osservazioni.md`); nessun TIFF corretto e nessun dato originale modificato.
 
-## Test 05C — script diagnostico preparato e provato su dati sintetici
+## Test 05C — risultati reali (diagnostica, non fusione)
 
-Lo script `code/phase2_reflection/2_reflection_step5c.py` è disponibile in GitHub. Riusa i metodi dei Test 05/05B, prepara mappe a scala 1:8, controlla il contrasto luminoso a più scale con **Top-hat (raggi 5/15/40 px sulla mappa)** e **DoG (sigma 3–10, 10–30, 25–65)**, confronta le quattro luci dopo il bilanciamento locale e penalizza in modo **morbido** i contorni persistenti. Non usa Hue del legno e non esclude rigidamente i bordi.
+Script: `code/phase2_reflection/2_reflection_step5c.py`, dipende da Test 05 e 05B. Mappe **688 × 1032** (1:8), TIFF originali 5504 × 8256 RGB uint8. Supporto stimato senza Hue: **50,8%** del fotogramma; **include erroneamente anche la tavola colori**.
 
-**Prova tecnica:** esecuzione completata su TIFF RGB sintetici 960×1440, con cinque output creati e nessun TIFF modificato. Il dataset sintetico ha prodotto 5.665 pixel candidati sulla mappa 120×180 con soglia 0,10, ma **non è una misura di accuratezza**: non abbiamo effettuato una valutazione di ground truth e la percentuale di candidati è elevata. Alzare la soglia riduce i candidati, ma può nascondere riflessi reali.
+Metodo: Top-hat con raggi **5/15/40** sulla mappa e DoG con sigma **(3,10)/(10,30)/(25,65)**; differenze Base/donatori bilanciati, penalità morbida per gradienti persistenti, soglia score **0,100**. Lo score **non è** una probabilità di riflesso.
 
-Output attesi sul dataset reale: `output/02_analisi_riflessi/test_05c/01_risposte_multiscala.png`, `02_confronto_illuminazioni.png`, `03_candidati_e_donatori.png`, `04_confronti_nativi.png` e `osservazioni.md`.
+| Indicatore | Test 05B | Test 05C |
+| --- | ---: | ---: |
+| Pixel candidati preview | 38.530 | **84.857** |
+| Percentuale fotogramma | 5,43% | **11,95%** |
+| Percentuale R4 fra candidati | 47,6% | **61,2%** |
+| Falso positivo principale | Ponticello | **Tavola colori** |
 
-**Non ancora validato sul violino**: verificare macchia alta a destra, bordi, ponticello/corde, legno sano e tavola colori. Test 02 resta la migliore fotografia. Test 05C non applica fusione.
+Scelte R1/R2/R3/R4 nel Test 05C: **10.369 / 13.179 / 9.408 / 51.901**. L'aumento dei candidati **non dimostra** più riflessi riconosciuti: manca un riferimento annotato.
 
-## Ipotesi da verificare sui TIFF reali — Test 05C
-Valutare **Top-hat e Difference of Gaussians multi-scala** per le anomalie luminose, separare il contributo dei **contorni strutturali** (Sobel/Canny), e confrontare i donatori *nello stesso punto* dopo bilanciamento d'illuminazione. Non creare maschere fissate sul colore arancione o ROI del violino. Usare ritagli nativi di **macchia diffusa**, **bordi**, **ponticello/corde**, **legno senza riflessi** per verificare veri e falsi positivi, non come vincoli per la soluzione.
+| Ritaglio (centro) | Donatore | Score | Guadagno | Microcontrasto Base → donatore | Valutazione visiva |
+| --- | --- | ---: | ---: | --- | --- |
+| (2492, 7404), tavola colori | R4 | 0,514 | 0,83 | 0,0386 → 0,0241 | **Falso positivo** fuori dal soggetto da migliorare |
+| (3444, 2964), zona alta destra | R4 | 0,469 | 1,34 | 0,0115 → 0,0053 | **Candidato interessante:** Base appare più slavata; R4 più arancione. Non dimostrata la superiorità della texture/donatore |
+| (3292, 6308), controllo legno | R1 | 0,000 | 1,37 | 0,0071 → 0,0047 | Controllo correttamente non selezionato |
 
-I concetti e le pagine del corso sono raccolti in [03_slide_corso.md](03_slide_corso.md). **Test 05C è implementato e tecnicamente eseguito su dati sintetici; non è ancora valutato sui TIFF reali.**
+Osservazioni sulle mappe:
+- **Top-hat:** attiva anche tessitura, corde, contorni, hardware e tavola colori.
+- **DoG:** segnala regioni luminose più estese ma risponde anche ai confini strutturali.
+- **Differenza multi-luce:** alcune risposte possono essere ombre e non riflessi.
+- **Penalità dei bordi:** intercetta parte dei contorni persistenti, non tutti i falsi positivi. Non eliminarli indiscriminatamente: anche i bordi possono riflettere.
+- Il supporto non cromatico è più generale della vecchia maschera arancione, ma **non segmenta correttamente l'oggetto di interesse**: include la tavola colori.
+
+**Decisione:** Test 05C aggiunge strumenti diagnostici utili, ma **non è sufficientemente affidabile per guidare una nuova fusione**. R4 prevalente non è prova di superiorità. Il calo del microcontrasto non prova da solo una perdita di dettagli perché anche il riflesso può generare contrasto: richiede ispezione visuale in corrispondenza geometrica.
+
+Output locale: `output/02_analisi_riflessi/test_05c/`, con quattro PNG e `osservazioni.md`. Nessun TIFF corretto. **Test 02 resta la migliore fotografia**.
+
+## Prossima azione — protocollo di valutazione prima di nuovi filtri
+
+1. Annotare manualmente **poche regioni per sola validazione**, includendo il riflesso diffuso alto a destra, eventuali altri riflessi, bordi, elementi strutturali e legno sano; includere esplicitamente la tavola colori tra i negativi.
+2. Per ciascuna regione, confrontare Base e **tutti e quattro** i donatori registrati, prima e dopo bilanciamento, osservando riflessi, ombre, colori e texture a pixel nativi. Non giudicare soltanto da score o microcontrasto.
+3. Misurare quali regioni candidate vengono riconosciute e quanti falsi positivi restano. Le annotazioni servono **solo a misurare**, non a creare regole hardcoded del violino.
+4. Solo dopo decidere se migliorare il supporto/segmentazione generica, il confronto fotometrico o la selezione dei donatori. Conservare gli esperimenti precedenti.
+
+Riferimenti didattici: [03_slide_corso.md](03_slide_corso.md). Nessuna accuratezza quantitativa dimostrata e **nessun nuovo TIFF migliorato** dai Test 05/05B/05C.
 
 Le percentuali di pixel modificati descrivono l'intervento, **non la quantità di riflesso rimossa**. I TIFF e le anteprime restano sul PC.

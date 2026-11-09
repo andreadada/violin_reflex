@@ -30,30 +30,17 @@ Usare gli output già presenti: `output/01_registrazione/test_01/risultato/regis
 - **Test 05:** confronto delle mappe candidate delle luci e di Base. Il 95,8% dei candidati Base ha una corrispondenza entro 5 px sulla mappa 1:8, **non è** una misura dell'accuratezza dei riflessi. La somma approssimata delle illuminazioni spiega solo parzialmente Base (R² holdout ~0,563). Molti falsi positivi su hardware, contorni e tavola colori.
 - **Test 05B — eseguito e valutato:** 38.530 pixel candidati (5,43% anteprima); selezioni R1/R2/R3/R4: 7.535/7.886/4.761/18.348. Nonostante gli indizi di dettaglio, il massimo score 0,608 è sul **ponticello**: il donatore R1 introduce una forte ombra, non un miglioramento certo. Il secondo candidato (score 0,299) mostra una dominante violacea/lucida. **Falsi positivi** su corde, contorni, ponticello e tavola colori; la macchia diffusa alta a destra non domina le mappe. Non usare Test 05B per la fusione.
 
-- **Test 05C — creato in GitHub e testato su TIFF sintetici:** script `code/phase2_reflection/2_reflection_step5c.py`. Top-hat/DoG multi-scala, confronto fotometrico multi-luce, penalità morbida di bordi persistenti e ombre, ritagli nativi. Ha generato i cinque file attesi sul fixture sintetico (960×1440). **Non è ancora validato sulle fotografie reali e non produce una correzione.**
+- **Test 05C — eseguito e valutato sui TIFF reali:** 84.857 pixel candidati (**11,95%** del frame preview 1:8), contro 38.530 (**5,43%**) di Test 05B. Scelte R1–R4: 10.369 / 13.179 / 9.408 / 51.901 (**R4: 61,2%**). Il massimo score **0,514** è sulla **tavola colori**: falso positivo, supporto non cromatico include un oggetto non target. Un secondo candidato **(3444,2964), R4, score 0,469** è nella zona di legno alta a destra con Base visivamente slavata: promettente da esaminare, **non** prova di donatore migliore. Microcontrasto Base→donatore 0,0115→0,0053: il contrasto da riflesso può falsare la metrica. I filtri multiscala rispondono ancora a contorni/texture/hardware. Nessun nuovo TIFF.
 
-Output locali valutati: `output/02_analisi_riflessi/test_01/` … `test_05/` e `output/02_analisi_riflessi/test_05b/`. **Non sovrascriverli.**
+Output locali già valutati: `output/02_analisi_riflessi/test_01/` … `test_05/`, `test_05b/`, `test_05c/`. Non sovrascriverli.
 
-## Prossima azione — valutare Test 05C reale
+## Prossima azione — protocollo di valutazione controllato
 
-Dopo `git pull`, dalla root del progetto:
+**Non** aumentare altre soglie o passare subito a un Test 06 di fusione. Predisporre **pochi esempi annotati soltanto per valutare**: riflesso diffuso in alto a destra, riflessi residui, bordi, corde/ponticello, legno sano e tavola colori. Per ognuno esaminare Base + R1–R4 a pixel nativi e valutare il recupero fotografico di texture, colore e ombre. Le etichette manuali **non sono input dell'algoritmo finale**. Separare prima il problema **supporto del soggetto** da quello di **rilevamento del riflesso** e dalla **scelta del donatore**. Poi decidere un'unica modifica verificabile, senza soglie cromatiche specifiche per il violino.
 
-```powershell
-python code/phase2_reflection/2_reflection_step5c.py
-```
+I Test 05/05B/05C sono **diagnostici**. Le mappe di score non sono probabilità e le percentuali dei candidati non misurano la precisione. **Test 02 rimane la baseline preferita visivamente.** Obiettivo generale: foto di riferimento ben illuminata + acquisizioni alternative, non una soluzione custom per questo violino.
 
-Produce **solo** quattro PNG e `osservazioni.md` in `output/02_analisi_riflessi/test_05c/`; rifiuta di sovrascrivere una cartella già piena. Per una nuova prova usare `--out` differente.
-
-Verificare soprattutto:
-- il riflesso ampio **alto a destra** già attenuato in Test 02;
-- falsi positivi su ponticello/corde, tavola colori, bordi, legno sano;
-- eventuali ombre/dominanti nel donatore proposto e recupero dei dettagli reali.
-
-Le mappe 1:8 e il punteggio **non certificano** un riflesso. Nel fixture sintetico, soglia 0,10 → 5.665 candidati su 120×180: diagnostica permissiva, non accuratezza. Confrontare con Test 05/05B prima di decidere se correggere il metodo o passare alla fusione.
-
-Riferimenti del corso: [03_slide_corso.md](03_slide_corso.md). **Nessun risultato qualitativo su Test 05C reale ancora disponibile.** Conservare Test 02 come baseline.
-
-In futuro: parametri configurabili e applicazione, **non subito**.
+In futuro: parametri configurabili e applicazione, non ora.
 
 ## Uso dopo la riorganizzazione
 
