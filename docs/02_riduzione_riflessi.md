@@ -107,4 +107,20 @@ Output locale: `output/02_analisi_riflessi/test_05c/`, con quattro PNG e `osserv
 
 Riferimenti didattici: [03_slide_corso.md](03_slide_corso.md). Nessuna accuratezza quantitativa dimostrata e **nessun nuovo TIFF migliorato** dai Test 05/05B/05C.
 
+## Test 06 — confronto nativo controllato (diagnostica, senza fusione)
+
+È stato prodotto **localmente** in `output/02_analisi_riflessi/test_06_confronto_nativo/` un confronto visivo di **cinque regioni × sei viste**: Base, Test 02, R1, R2, R3, R4. Ogni ritaglio è **448×448 px a risoluzione nativa**, RGB senza ridimensionamenti, normalizzazioni, filtri o modifiche dei TIFF. File locali: `confronto_ritagli_nativi.png`, `osservazioni.md`. Non è stato pubblicato uno script nuovo: la prova è stata preparata in locale con Codex.
+
+| Controllo (centro nativo) | Evidenza visiva |
+| --- | --- |
+| Riflesso diffuso alto-destra (3444,2964) | Test 02 attenua la velatura conservando resa naturale. R1 molto scuro, R2 tendente al rosa/puntinato; R3/R4 non dimostrano un netto recupero di texture |
+| Ponte/corde (3060,3772) | Differenze principalmente di ombre e illuminazione strutturale: non sono evidenze di recupero della superficie |
+| Bordo esterno destro (4300,4200) | R2/R3 introducono brillantezza sul bordo; R1 scuro, R4 con dominante violacea. Base e Test 02 restano plausibili |
+| Legno non evidentemente riflesso (3292,6308) | Base e Test 02 simili; altre viste variano in esposizione/colore senza chiaro vantaggio di dettaglio |
+| Tavola colori (2492,7404) | Controllo negativo per la segmentazione: fuori dal soggetto d'interesse |
+
+**Interpretazione:** non emerge un donatore universalmente migliore, e questo non è richiesto da una selezione **locale**. Il confronto non normalizzato consente di individuare ombre e dominanti ma **non quantifica il recupero della texture**; manca una verifica annotata delle aree positive/negative e degli errori del rilevatore. Non interpretare la maggiore saturazione di un donatore come prova di minori riflessi.
+
+**Decisione:** confermata la preferenza visiva per Test 02. Nessun Test 06 di fusione e nessun nuovo TIFF. Il prossimo esperimento deve essere **uno solo**, piccolo e verificabile: poche regioni etichettate per sola valutazione (riflessi e controlli) e confronto delle scelte automatiche contro il giudizio visivo, senza usarle per introdurre ROI/parametri specifici del violino.
+
 Le percentuali di pixel modificati descrivono l'intervento, **non la quantità di riflesso rimossa**. I TIFF e le anteprime restano sul PC.
