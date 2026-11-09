@@ -5,8 +5,8 @@ Pipeline di Computer Vision per attenuare i riflessi in **più fotografie dello 
 ## Avanzamento
 
 - **Fase 1 — Registrazione:** completata e validata. Script principale: `code/phase1_registration/registration_pipeline.py`.
-- **Fase 2 — Riduzione dei riflessi:** Test 01–04 eseguiti. **Test 02** è la migliore baseline visiva; Test 04 non è stato preferito.
-- **Prossimo esperimento:** Test 05, criteri di fusione meno dipendenti dal colore e dalla forma del violino.
+- **Fase 2 — Riduzione dei riflessi:** Test 01–05 eseguiti; Test 05B pronto da verificare. **Test 02** è la migliore baseline visiva; Test 04 non è stato preferito.
+- **Prossimo esperimento:** Test 05B: confronto multi-luce e qualità del dettaglio dei donatori, senza generare nuove correzioni.
 
 ## Struttura
 
@@ -27,7 +27,7 @@ python code/phase2_reflection/2_reflection_step2.py --help
 python code/phase2_reflection/2_reflection_step3.py --help
 ```
 
-**Attenzione:** il Test 02 produce `output/02_analisi_riflessi/test_02/`; se esiste già, non rilanciarlo senza scegliere un `--out` nuovo. I Test 03–04 caricano il Test 02 dalla stessa cartella `phase2_reflection/`.
+**Attenzione:** il Test 02 produce `output/02_analisi_riflessi/test_02/`; se esiste già, non rilanciarlo senza scegliere un `--out` nuovo. I Test 03–04 caricano il Test 02 dalla stessa cartella; Test 05B riutilizza le funzioni del Test 05 `phase2_reflection/`.
 
 ## Documentazione
 

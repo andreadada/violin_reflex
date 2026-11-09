@@ -5,7 +5,7 @@ Pipeline **generale** di riduzione fotografica dei riflessi usando scatti dello 
 
 ## Disponibile in GitHub
 - Fase 1: `code/phase1_registration/registration_pipeline.py` e i 6 script esplorativi originali di registrazione.
-- Fase 2: `code/phase2_reflection/2_reflection_step1.py` … `2_reflection_step4.py`.
+- Fase 2: `code/phase2_reflection/2_reflection_step1.py` … `2_reflection_step5b.py` (Test 05 e 05B inclusi).
 - Convenzioni: [CONVENZIONI_CODICE.md](CONVENZIONI_CODICE.md).
 - [Acquisizione](00_acquisizione.md), [registrazione](01_registrazione.md), [test](02_riduzione_riflessi.md).
 
@@ -27,10 +27,15 @@ Usare gli output già presenti: `output/01_registrazione/test_01/risultato/regis
 - **Test 03:** confronto a pixel nativi. Zona migliorata: Base−Test 02 **+21,52/255**. Selezione errata delle altre zone («ponticello» e «cordiera»).
 - **Test 04:** maschera colore del legno e intensità maggiore. **12,29%** dei pixel modificati. **Visivamente preferito Test 02**; Test 04 è troppo legato al colore del violino.
 
-Output locali: `output/02_analisi_riflessi/test_01/` … `test_04/`. **Non sovrascriverli.**
+- **Test 05:** confronto delle mappe candidate delle luci e di Base. Il 95,8% dei candidati Base ha una corrispondenza entro 5 px sulla mappa 1:8, **non è** una misura dell'accuratezza dei riflessi. La somma approssimata delle illuminazioni spiega solo parzialmente Base (R² holdout ~0,563). Molti falsi positivi su hardware, contorni e tavola colori.
+- **Test 05B:** script diagnostico disponibile in `code/phase2_reflection/2_reflection_step5b.py`. Confronta la luminosità localmente bilanciata, il microcontrasto e il rischio di ombre; **da eseguire e valutare sul dataset reale**, non è un algoritmo di fusione.
 
-## Prossima azione — Test 05
-Partire da **`2_reflection_step2.py`**. Progettare una selezione/fusione che non dipenda dalle soglie cromatiche del legno né da ROI fisse. Distinguere differenze di illuminazione dai riflessi effettivamente attenuabili. Prima un test circoscritto con verifica a pixel nativi e confronto con Test 02; poi eventualmente estendere all'intero soggetto. Verificare su un secondo dataset diverso, se disponibile, prima di dichiarare il metodo generale.
+Output locali già valutati: `output/02_analisi_riflessi/test_01/` … `test_05/`. **Non sovrascriverli.**
+
+## Prossima azione — valutare Test 05B
+Eseguire `python code/phase2_reflection/2_reflection_step5b.py` dalla root locale, dopo `git pull`. Il Test 05B usa `2_reflection_step5.py` nella stessa cartella. Ispezionare `01_evidenza_base.png`, `02_scelta_donatori.png`, `03_confronti_nativi.png` e `osservazioni.md` in `output/02_analisi_riflessi/test_05b/`.
+
+Controllare manualmente riflessi reali, bordi, corde, ponticello, falsi positivi e conservazione della texture. **Non dichiarare riuscito il Test 05B** prima di questa verifica. Test 02 resta la baseline. In seguito provare un secondo dataset per verificare la generalità.
 
 In futuro: parametri configurabili e applicazione, **non subito**.
 

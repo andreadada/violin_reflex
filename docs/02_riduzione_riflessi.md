@@ -10,6 +10,8 @@ Gli script sono in `code/phase2_reflection/` e sono eseguibili dalla root del pr
 | 02 | `2_reflection_step2.py` | Fusione selettiva; **migliore risultato attuale** |
 | 03 | `2_reflection_step3.py` | Analisi nativa dei donatori e di Test 02; nessuna nuova correzione |
 | 04 | `2_reflection_step4.py` | Maschera del legno più selettiva; **non preferito** a Test 02 |
+| 05 | `2_reflection_step5.py` | Diagnostica multi-luce, ampia corrispondenza ma molti falsi positivi |
+| 05B | `2_reflection_step5b.py` | Bilanciamento luminoso + microcontrasto; **da valutare sui TIFF reali** |
 
 ## Test 02 — baseline
 Fusione basata su normalizzazione lenta dei donatori, cromaticità, luminosità ed esposizione, mantenendo Base come riferimento.
@@ -43,7 +45,12 @@ Maschera cromatica specifica del legno, con alpha Test 02 × **1,35** (limite **
 
 **Decisione:** conservare Test 02 come baseline. Test 04 rimane un esperimento utile ma non una revisione approvata.
 
-## Prossimo esperimento — Test 05
-Ripartire dal Test 02 e studiare criteri di scelta dei donatori/riflessi **indipendenti dal colore specifico del soggetto**. Verificare i dettagli disponibili e il rischio di ombre/aloni prima di cambiare l'algoritmo. Confrontare sempre con Base e Test 02.
+## Test 05 — risultati reali
+Mappa di eccessi luminosi locali e confronto tra Base e i singoli scatti a scala 1:8. **58.949 su 61.523 candidati Base (95,8%)** hanno almeno un candidato nelle singole illuminazioni entro cinque pixel di anteprima. Non è sensibilità/accuratezza del rilevatore: molte aree non sono riflessi (corde, contorni, tavola colori). La somma luminosa approssimata ha dato **R² holdout 0,5626** e non costituisce una ricostruzione fisicamente calibrata di Base.
+
+## Test 05B — diagnostica preparata
+Lo script `2_reflection_step5b.py` (usa funzioni di `2_reflection_step5.py`) confronta i quattro scatti dopo bilanciamento fotografico lento, calcola indizi da eccesso di luminosità di Base, microcontrasto e rischio d'ombra. Produce in `test_05b/` tre immagini e `osservazioni.md`. Nessun TIFF corretto. **Provato su TIFF sintetici, non ancora valutato sulle fotografie reali.**
+
+**Decisione sospesa:** conservare Test 02 come baseline, controllare i ritagli nativi e i falsi positivi prima di progettare la fusione successiva.
 
 Le percentuali indicano pixel modificati, **non la quantità di riflesso rimossa**. Tutti i TIFF e le anteprime restano in `output/02_analisi_riflessi/` sul PC.

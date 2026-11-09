@@ -8,6 +8,8 @@
 | **`2_reflection_step2.py`** | **Fusione fotografica selettiva** | **Baseline migliore attuale** |
 | `2_reflection_step3.py` | Analisi dei donatori e di Test 02 | Diagnostica |
 | `2_reflection_step4.py` | Maschera cromatica più restrittiva | Non preferito a Test 02 |
+| `2_reflection_step5.py` | Corrispondenza dei candidati multi-luce | Diagnostica con falsi positivi |
+| `2_reflection_step5b.py` | Confronto donatori, texture e controllo ombre | Da valutare su foto reali |
 
 Esecuzione dalla radice:
 
